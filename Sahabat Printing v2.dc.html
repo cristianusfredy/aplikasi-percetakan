@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.453.0/dist/umd/lucide.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: 'Manrope', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(120,110,100,.28); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+input, select, textarea, button { font-family: inherit; }
+input:focus, select:focus, textarea:focus { outline: none; }
+@keyframes scIn { from { transform: translateY(6px); } to { transform: none; } }
+@keyframes scToast { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.sc-view { animation: scIn .28s cubic-bezier(.2,.7,.2,1); }
+i[data-lucide] { display: inline-flex; align-items: center; justify-content: center; line-height: 0; vertical-align: middle; }
+i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
+@media print {
+  @page { margin: 14mm; }
+  body * { visibility: hidden !important; }
+  .print-area, .print-area * { visibility: visible !important; }
+  .print-area { position: absolute !important; left: 0; top: 0; width: 100%; box-shadow: none !important; }
+  .no-print { display: none !important; }
+}
+</style>
+</helmet>
+
+<div ref="{{ setRoot }}" style="min-height:100vh;background:var(--page);color:var(--text);font-family:'Manrope',system-ui,sans-serif;--accent:#15803d;--accent-strong:#166534;--accent-soft:#e4f5ea;--page:#f6faf7;--card:#ffffff;--border:#e2ebe5;--text:#16201b;--muted:#6b766f;--side-bg:#ffffff;--side-fg:#3a443e;--side-muted:#9aa69f;--side-active-bg:#e4f5ea;--side-active-fg:#15803d;--side-border:#e7efe9;--radius:14px;--shadow:0 1px 2px rgba(28,25,23,.04),0 10px 26px -14px rgba(28,25,23,.16)">
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(120% 90% at 50% -10%, #e9f6ee 0%, #f6faf7 55%, #edf4f0 100%)">
+  <div style="width:100%;max-width:760px">
+    <div style="display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:28px">
+      <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;box-shadow:0 8px 20px -8px rgba(21,128,61,.5)"><i data-lucide="printer"></i></div>
+      <div style="text-align:left">
+        <div style="font-weight:800;font-size:18px;letter-spacing:.14em;color:#1c1917">SAHABAT PRINTING</div>
+        <div style="font-size:12px;color:#9a8f85;letter-spacing:.02em;margin-top:1px">Sistem Manajemen Percetakan</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:26px">
+      <div style="font-size:13px;font-weight:600;color:#15803d;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Masuk sebagai</div>
+      <h1 style="font-size:30px;font-weight:800;margin:0;color:#1c1917;letter-spacing:-.02em">Pilih peran Anda untuk mulai</h1>
+      <p style="color:#7c736b;font-size:15px;margin:10px auto 0;max-width:460px">Satu sistem terpusat untuk order, harga, produksi, pembayaran, dan laporan — menggantikan catatan WhatsApp yang tercecer.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px">
+      <sc-for list="{{ loginRoles }}" as="r" hint-placeholder-count="4">
+        <button data-role="{{ r.id }}" onClick="{{ onLogin }}" style="text-align:left;cursor:pointer;background:#fff;border:1px solid #e2ebe5;border-radius:18px;padding:22px 20px 20px;box-shadow:0 1px 2px rgba(28,25,23,.04);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease" style-hover="transform:translateY(-4px);box-shadow:0 18px 36px -20px rgba(28,25,23,.32);border-color:#bfe3cc">
+          <div style="width:44px;height:44px;border-radius:12px;background:{{ r.iconBg }};color:{{ r.iconFg }};display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px"><i data-lucide="{{ r.icon }}"></i></div>
+          <div style="font-weight:800;font-size:17px;color:#1c1917">{{ r.title }}</div>
+          <div style="font-size:13px;color:#9a8f85;margin-top:2px;margin-bottom:14px">{{ r.who }}</div>
+          <div style="font-size:13px;color:#57514b;line-height:1.5">{{ r.desc }}</div>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:6px;color:#15803d;font-weight:700;font-size:13px">Masuk <i data-lucide="arrow-right" style="font-size:15px"></i></div>
+        </button>
+      </sc-for>
+    </div>
+    <div style="text-align:center;margin-top:24px;font-size:12.5px;color:#a8a29e">Prototipe MVP · Anda bisa berpindah peran kapan saja dari menu atas</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;min-height:100vh">
+
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+  <aside style="width:248px;flex-shrink:0;background:var(--side-bg);border-right:1px solid var(--side-border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <div style="padding:20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--side-border)">
+      <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0"><i data-lucide="printer"></i></div>
+      <div style="min-width:0">
+        <div style="font-weight:800;font-size:13.5px;letter-spacing:.1em;color:var(--side-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">SAHABAT</div>
+        <div style="font-size:10.5px;color:var(--side-muted);letter-spacing:.18em">PRINTING</div>
+      </div>
+    </div>
+    <nav style="flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:3px;overflow-y:auto">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <button data-view="{{ n.view }}" onClick="{{ onNav }}" style="{{ n.style }}">
+          <i data-lucide="{{ n.icon }}" style="font-size:18px"></i>
+          <span>{{ n.label }}</span>
+          <sc-if value="{{ n.badge }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px">{{ n.badge }}</span></sc-if>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="padding:14px 12px;border-top:1px solid var(--side-border)">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">{{ userInitials }}</div>
+        <div style="min-width:0;flex:1">
+          <div style="font-weight:700;font-size:13px;color:var(--side-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ userLabel }}</div>
+          <div style="font-size:11px;color:var(--side-muted)">{{ roleLabel }}</div>
+        </div>
+        <button onClick="{{ onLogout }}" title="Keluar" style="cursor:pointer;background:transparent;border:none;color:var(--side-muted);display:flex;padding:6px;border-radius:8px" style-hover="background:var(--side-active-bg);color:var(--side-active-fg)"><i data-lucide="log-out" style="font-size:16px"></i></button>
+      </div>
+    </div>
+  </aside>
+  </sc-if>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--page) 82%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 22px;height:62px;display:flex;align-items:center;gap:14px">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:9px;margin-right:auto">
+          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i data-lucide="printer"></i></div>
+          <span style="font-weight:800;font-size:13px;letter-spacing:.08em">SAHABAT</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{ showTitle }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-right:auto;min-width:0">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em">{{ crumb }}</div>
+          <h2 style="margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pageTitle }}</h2>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:3px">
+        <sc-for list="{{ roleSwitch }}" as="rs" hint-placeholder-count="3">
+          <button data-role="{{ rs.id }}" onClick="{{ onSwitchRole }}" title="{{ rs.label }}" style="{{ rs.style }}"><i data-lucide="{{ rs.icon }}" style="font-size:15px"></i><span style="{{ rs.labelStyle }}">{{ rs.short }}</span></button>
+        </sc-for>
+      </div>
+
+      <button onClick="{{ toggleTheme }}" title="Ganti tampilan" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:8px 12px;font-weight:700;font-size:12.5px;color:var(--text)" style-hover="border-color:var(--accent)">
+        <i data-lucide="palette" style="font-size:15px;color:var(--accent)"></i>
+        <span style="{{ themeLabelStyle }}">Tampilan {{ theme }}</span>
+      </button>
+    </header>
+
+    <main style="flex:1;padding:24px 22px 40px;max-width:1240px;width:100%;margin:0 auto">
+
+      <!-- DASHBOARD -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <div style="display:grid;grid-template-columns:{{ kpiCols }};gap:14px;margin-bottom:20px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{{ k.label }}</span>
+                <span style="width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:{{ k.iconBg }};color:{{ k.iconFg }}"><i data-lucide="{{ k.icon }}"></i></span>
+              </div>
+              <div style="font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ k.value }}</div>
+              <div style="font-size:12.5px;color:var(--muted);margin-top:3px">{{ k.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:{{ dashGrid3 }};gap:16px;align-items:start">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)">
+              <h3 style="margin:0;font-size:15px;font-weight:800">Pesanan Terbaru</h3>
+              <button data-view="orders" onClick="{{ onNav }}" style="cursor:pointer;background:transparent;border:none;color:var(--accent);font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:4px">Semua <i data-lucide="arrow-right" style="font-size:14px"></i></button>
+            </div>
+            <div>
+              <sc-for list="{{ dashRecent }}" as="o" hint-placeholder-count="5">
+                <div data-id="{{ o.id }}" onClick="{{ onOpenOrder }}" style="display:flex;align-items:center;gap:14px;padding:13px 18px;border-bottom:1px solid var(--border);cursor:pointer" style-hover="background:var(--accent-soft)">
+                  <div style="min-width:0;flex:1">
+                    <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)">{{ o.id }}</span><span style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.customerName }}</span></div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:2px">{{ o.itemsLabel }} · {{ o.deadlineLabel }}</div>
+                  </div>
+                  <span style="{{ o.badgeStyle }}">{{ o.stage }}</span>
+                  <div style="display:flex;align-items:center;gap:9px;flex-shrink:0">
+                    <span style="font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">{{ o.totalDisplay }}</span>
+                    <span style="{{ o.payStickerStyle }}">{{ o.payShort }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+              <div style="padding:15px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px"><i data-lucide="triangle-alert" style="color:#dc2626;font-size:16px"></i><h3 style="margin:0;font-size:14px;font-weight:800">Masalah Produksi/Desain</h3></div>
+              <sc-if value="{{ hasIssues }}" hint-placeholder-val="{{ true }}">
+                <div>
+                  <sc-for list="{{ dashIssues }}" as="g" hint-placeholder-count="3">
+                    <div style="padding:12px 18px;border-bottom:1px solid var(--border)">
+                      <div style="font-weight:700;font-size:13px;color:#b91c1c">{{ g.type }}</div>
+                      <div style="font-size:12px;color:var(--muted);margin-top:2px">{{ g.where }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noIssues }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;color:var(--muted);font-size:13px">Tidak ada masalah tercatat. 🎉</div></sc-if>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+              <div style="padding:15px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px"><i data-lucide="boxes" style="color:var(--accent);font-size:16px"></i><h3 style="margin:0;font-size:14px;font-weight:800">Stok Bahan</h3></div>
+              <sc-for list="{{ dashStock }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;padding:11px 18px;border-bottom:1px solid var(--border)">
+                  <span style="font-size:13px;font-weight:600;flex:1">{{ s.name }}</span>
+                  <span style="font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums">{{ s.qtyLabel }}</span>
+                  <span style="{{ s.pillStyle }}">{{ s.pill }}</span>
+                </div>
+              </sc-for>
+            </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ORDERS LIST -->
+      <sc-if value="{{ isOrders }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px">
+          <div style="position:relative;flex:1;min-width:220px">
+            <i data-lucide="search" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px"></i>
+            <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="Cari pelanggan atau nomor order…" style="width:100%;padding:11px 14px 11px 38px;border:1px solid var(--border);border-radius:12px;background:var(--card);font-size:14px;color:var(--text)" style-focus="border-color:var(--accent)">
+          </div>
+          <div style="display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px">
+            <sc-for list="{{ scopeTabs }}" as="tb" hint-placeholder-count="2"><button data-scope="{{ tb.scope }}" onClick="{{ onScope }}" style="{{ tb.style }}">{{ tb.label }}<span style="{{ tb.countStyle }}">{{ tb.count }}</span></button></sc-for>
+          </div>
+          <sc-if value="{{ canCreate }}" hint-placeholder-val="{{ true }}">
+            <button data-view="create" onClick="{{ onNav }}" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:11px 16px;font-weight:700;font-size:13.5px;box-shadow:0 8px 18px -10px var(--accent)" style-hover="background:var(--accent-strong)"><i data-lucide="plus" style="font-size:17px"></i>Buat Order</button>
+          </sc-if>
+        </div>
+
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+          <div style="display:grid;grid-template-columns:{{ orderGrid }};gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">
+            <span>Order</span><span>Item</span><span class="sc-hide-m">Deadline</span><span>Status</span><span style="text-align:right">Total</span><span style="text-align:right">Bayar</span>
+          </div>
+          <sc-for list="{{ ordersVM }}" as="o" hint-placeholder-count="6">
+            <div data-id="{{ o.id }}" onClick="{{ onOpenOrder }}" style="display:grid;grid-template-columns:{{ orderGrid }};gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;align-items:center" style-hover="background:var(--accent-soft)">
+              <div style="min-width:0">
+                <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.customerName }}</div>
+                <div style="font-family:'Space Mono',monospace;font-size:11.5px;color:var(--muted)">{{ o.id }}</div>
+              </div>
+              <span style="font-size:13px;color:var(--text)">{{ o.itemsLabel }}</span>
+              <span style="font-size:13px;color:var(--muted)" class="sc-hide-m">{{ o.deadlineLabel }}</span>
+              <span><span style="{{ o.badgeStyle }}">{{ o.stage }}</span></span>
+              <span style="text-align:right;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums">{{ o.totalDisplay }}</span>
+              <span style="text-align:right"><span style="{{ o.payStickerStyle }}">{{ o.payShort }}</span></span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noOrders }}" hint-placeholder-val="{{ false }}"><div style="padding:36px;text-align:center;color:var(--muted);font-size:14px">Tidak ada order yang cocok.</div></sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ORDER DETAIL -->
+      <sc-if value="{{ isOrderDetail }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <button onClick="{{ onBack }}" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--muted);font-weight:700;font-size:13px;margin-bottom:14px;padding:0"><i data-lucide="arrow-left" style="font-size:16px"></i>Kembali ke daftar</button>
+        <div style="display:grid;grid-template-columns:{{ detailCols }};gap:16px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div>
+                  <div style="font-family:'Space Mono',monospace;font-size:12.5px;color:var(--accent);font-weight:700">{{ od.id }}</div>
+                  <h2 style="margin:4px 0 0;font-size:22px;font-weight:800">{{ od.customerName }}</h2>
+                  <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:13px;color:var(--muted)">
+                    <span style="display:flex;align-items:center;gap:5px"><i data-lucide="phone" style="font-size:14px"></i>{{ od.contact }}</span>
+                    <span style="display:flex;align-items:center;gap:5px"><i data-lucide="calendar" style="font-size:14px"></i>Deadline {{ od.deadlineLabel }}</span>
+                    <span style="display:flex;align-items:center;gap:5px"><i data-lucide="clock" style="font-size:14px"></i>Dibuat {{ od.createdLabel }}</span>
+                  </div>
+                </div>
+                <span style="{{ od.payStyle }}">{{ od.payLabel }}</span>
+              </div>
+              <sc-if value="{{ od.hasNotes }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;background:var(--page);border:1px solid var(--border);border-radius:11px;padding:11px 14px;font-size:13px;color:var(--text)"><span style="color:var(--muted);font-weight:700">Catatan: </span>{{ od.notes }}</div></sc-if>
+            </div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+              <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--accent-soft)"><h3 style="margin:0;font-size:15px;font-weight:800;color:var(--accent-strong);display:flex;align-items:center;gap:8px"><i data-lucide="layers" style="font-size:16px;color:var(--accent)"></i>Item Pesanan</h3><span style="font-size:12.5px;color:var(--accent-strong);opacity:.75">{{ od.itemsLabel }}</span></div>
+              <sc-for list="{{ od.items }}" as="it" hint-placeholder-count="2">
+                <div style="padding:16px 18px;border-bottom:1px solid var(--border)">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                    <div style="min-width:0">
+                      <div style="font-weight:800;font-size:15px">{{ it.productName }}</div>
+                      <div style="font-size:12.5px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums">{{ it.qtyLabel }} × {{ it.baseLabel }}</div>
+                    </div>
+                    <div style="font-weight:800;font-size:15px;font-variant-numeric:tabular-nums">{{ it.subtotalDisplay }}</div>
+                  </div>
+                  <sc-if value="{{ it.hasBrief }}" hint-placeholder-val="{{ false }}"><div style="margin-top:9px;font-size:12.5px;color:var(--text);background:var(--page);border-radius:9px;padding:8px 11px;border:1px solid var(--border)"><span style="color:var(--muted);font-weight:700">Brief: </span>{{ it.brief }}</div></sc-if>
+                  <sc-if value="{{ it.hasRefs }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;align-items:center"><span style="font-size:11.5px;font-weight:700;color:var(--muted)">Referensi:</span><sc-for list="{{ it.refs }}" as="r" hint-placeholder-count="1"><a href="{{ r.href }}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid var(--border);border-radius:7px;padding:3px 9px;text-decoration:none"><i data-lucide="paperclip" style="font-size:12px"></i>{{ r.label }}</a></sc-for></div></sc-if>
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:11px">
+                    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);background:#f5f3ff;border:1px solid #ece6ff;border-radius:7px;padding:3px 9px"><i data-lucide="pen-tool" style="font-size:12px;color:#7c3aed"></i>{{ it.designerName }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);background:#ecfeff;border:1px solid #cdf3f7;border-radius:7px;padding:3px 9px"><i data-lucide="printer" style="font-size:12px;color:#0891b2"></i>{{ it.operatorName }}</span>
+                    <span style="margin-left:auto;{{ it.badgeStyle }}">{{ it.status }}</span>
+                  </div>
+                  <sc-if value="{{ canEditStatus }}" hint-placeholder-val="{{ false }}">
+                    <sc-if value="{{ it.canAdvance }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;align-items:center;gap:8px;margin-top:11px">
+                        <button data-iid="{{ it.id }}" onClick="{{ onAdvanceItem }}" style="cursor:pointer;flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px;font-weight:700;font-size:13px" style-hover="background:var(--accent-strong)">Tandai Selesai Tahap Ini<i data-lucide="arrow-right" style="font-size:16px"></i></button>
+                        <button data-iid="{{ it.id }}" onClick="{{ onCancelItem }}" title="Batalkan item" style="cursor:pointer;background:transparent;border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--muted);display:flex;align-items:center" style-hover="border-color:#dc2626;color:#dc2626"><i data-lucide="x" style="font-size:16px"></i></button>
+                      </div>
+                      <div style="font-size:11.5px;color:var(--muted);margin-top:5px">{{ it.nextLabel }}</div>
+                    </sc-if>
+                    <sc-if value="{{ it.done }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:11px;background:var(--accent-soft);color:var(--accent-strong);border-radius:10px;padding:9px;font-weight:700;font-size:13px"><i data-lucide="check-circle-2" style="font-size:16px"></i>{{ it.doneLabel }}</div></sc-if>
+                  </sc-if>
+                  <sc-if value="{{ it.hasIssues }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+                      <sc-for list="{{ it.issues }}" as="iss" hint-placeholder-count="1">
+                        <div style="display:flex;gap:7px;align-items:flex-start;font-size:12px;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:9px;padding:7px 10px"><i data-lucide="triangle-alert" style="font-size:13px;margin-top:1px"></i><span><b>{{ iss.type }}</b>{{ iss.noteLabel }}</span></div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:78px">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">
+              <div style="margin:-18px -18px 14px;padding:14px 18px;background:var(--accent-soft);border-bottom:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0"><h3 style="margin:0;font-size:15px;font-weight:800;color:var(--accent-strong);display:flex;align-items:center;gap:8px"><i data-lucide="wallet" style="font-size:16px;color:var(--accent)"></i>Ringkasan Pembayaran</h3></div>
+              <div style="display:flex;flex-direction:column;gap:9px;font-size:13.5px">
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Subtotal</span><span style="font-variant-numeric:tabular-nums">{{ od.subtotalDisplay }}</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Diskon</span><span style="font-variant-numeric:tabular-nums;color:#dc2626">{{ od.discountDisplay }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding-top:9px;border-top:1px dashed var(--border)"><span style="font-weight:800">Total</span><span style="font-weight:800;font-variant-numeric:tabular-nums">{{ od.totalDisplay }}</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">DP / Dibayar</span><span style="font-variant-numeric:tabular-nums">{{ od.dpDisplay }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px 12px;background:var(--accent-soft);border-radius:10px;margin-top:4px"><span style="font-weight:800;color:var(--accent-strong)">Sisa</span><span style="font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent-strong)">{{ od.remainingDisplay }}</span></div>
+              </div>
+              <button onClick="{{ onShowNota }}" style="cursor:pointer;width:100%;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px;font-weight:700;font-size:13.5px;color:var(--text)" style-hover="border-color:var(--accent);color:var(--accent)"><i data-lucide="receipt" style="font-size:17px;color:var(--accent)"></i>Cetak Nota / Invoice</button>
+              <sc-if value="{{ canEditPay }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+                  <label style="font-size:12px;font-weight:700;color:var(--muted)">Catat pembayaran</label>
+                  <div style="display:flex;gap:8px;margin-top:7px">
+                    <input value="{{ payInput }}" onInput="{{ onPayInput }}" inputmode="numeric" placeholder="Jumlah" style="flex:1;min-width:0;padding:9px 11px;border:1px solid var(--border);border-radius:10px;font-size:13.5px;background:var(--page);color:var(--text);font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)">
+                    <button onClick="{{ onAddPay }}" style="cursor:pointer;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:0 14px;font-weight:700;font-size:13px" style-hover="background:var(--accent-strong)">Tambah</button>
+                  </div>
+                  <button onClick="{{ onMarkPaid }}" style="cursor:pointer;width:100%;margin-top:8px;background:transparent;border:1px solid var(--border);border-radius:10px;padding:9px;font-weight:700;font-size:13px;color:#16a34a" style-hover="border-color:#16a34a;background:#f0fdf4">Tandai Lunas</button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- CREATE MULTI-ORDER -->
+      <sc-if value="{{ isCreate }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <button onClick="{{ onBack }}" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--muted);font-weight:700;font-size:13px;margin-bottom:14px;padding:0"><i data-lucide="arrow-left" style="font-size:16px"></i>Batal</button>
+        <div style="display:grid;grid-template-columns:{{ detailCols }};gap:16px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px">
+              <div style="margin:-20px -20px 16px;padding:14px 20px;background:var(--accent-soft);border-bottom:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0">
+                <h3 style="margin:0;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--accent-strong)"><i data-lucide="user" style="font-size:16px;color:var(--accent)"></i>Data Pelanggan</h3>
+                <p style="margin:4px 0 0;font-size:12.5px;color:var(--accent-strong);opacity:.75">Input sekali — berlaku untuk semua item di order ini.</p>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div><label style="font-size:12px;font-weight:700;color:var(--muted)">Nama pelanggan</label><input data-field="customerName" value="{{ draft.customerName }}" onInput="{{ onCustField }}" placeholder="cth. Andi Pratama" style="{{ inputStyle }}" style-focus="border-color:var(--accent)"></div>
+                <div><label style="font-size:12px;font-weight:700;color:var(--muted)">No. WhatsApp</label><input data-field="contact" value="{{ draft.contact }}" onInput="{{ onCustField }}" placeholder="cth. 0812…" style="{{ inputStyle }}" style-focus="border-color:var(--accent)"></div>
+                <div><label style="font-size:12px;font-weight:700;color:var(--muted)">Deadline</label><input data-field="deadline" value="{{ draft.deadline }}" onInput="{{ onCustField }}" placeholder="cth. 28 Jun 2026" style="{{ inputStyle }}" style-focus="border-color:var(--accent)"></div>
+                <div><label style="font-size:12px;font-weight:700;color:var(--muted)">Catatan umum</label><input data-field="notes" value="{{ draft.notes }}" onInput="{{ onCustField }}" placeholder="opsional" style="{{ inputStyle }}" style-focus="border-color:var(--accent)"></div>
+              </div>
+            </div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+              <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--accent-soft)"><h3 style="margin:0;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--accent-strong)"><i data-lucide="layers" style="font-size:16px;color:var(--accent)"></i>Item Order</h3><span style="font-size:12px;color:var(--accent-strong);opacity:.75">{{ draftItemsLabel }}</span></div>
+              <sc-for list="{{ draftItems }}" as="it" hint-placeholder-count="1">
+                <div style="padding:18px;border-bottom:1px solid var(--border)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><span style="font-weight:800;font-size:13px;color:var(--accent)">Item {{ it.num }}</span><sc-if value="{{ it.removable }}" hint-placeholder-val="{{ false }}"><button data-idx="{{ it.idx }}" onClick="{{ onRemoveItem }}" style="cursor:pointer;background:transparent;border:none;color:var(--muted);display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600" style-hover="color:#dc2626"><i data-lucide="trash-2" style="font-size:14px"></i>Hapus</button></sc-if></div>
+                  <div>
+                    <label style="font-size:12px;font-weight:700;color:var(--muted)">Produk</label>
+                    <select data-idx="{{ it.idx }}" data-field="productId" value="{{ it.productId }}" onChange="{{ onItemField }}" style="{{ inputStyle }};cursor:pointer">
+                      <option value="">— Pilih produk —</option>
+                      <sc-for list="{{ productOptions }}" as="p" hint-placeholder-count="5"><option value="{{ p.id }}">{{ p.name }}</option></sc-for>
+                    </select>
+                  </div>
+                  <sc-if value="{{ it.dim }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:11px;background:var(--accent-soft);border:1px solid var(--border);border-radius:11px;padding:12px">
+                      <div style="font-size:11.5px;font-weight:700;color:var(--accent-strong);display:flex;align-items:center;gap:6px;margin-bottom:9px"><i data-lucide="ruler" style="font-size:14px"></i>Ukuran dalam sentimeter (cm)</div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+                        <div><label style="font-size:11.5px;font-weight:700;color:var(--muted)">Panjang (cm)</label><input data-idx="{{ it.idx }}" data-field="dimL" value="{{ it.dimL }}" onInput="{{ onItemField }}" inputmode="numeric" placeholder="cth. 300" style="width:100%;margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:13.5px;background:var(--card);color:var(--text);font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)"></div>
+                        <div><label style="font-size:11.5px;font-weight:700;color:var(--muted)">Lebar (cm)</label><input data-idx="{{ it.idx }}" data-field="dimW" value="{{ it.dimW }}" onInput="{{ onItemField }}" inputmode="numeric" placeholder="cth. 150" style="width:100%;margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:13.5px;background:var(--card);color:var(--text);font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)"></div>
+                        <div><label style="font-size:11.5px;font-weight:700;color:var(--muted)">Jumlah (pcs)</label><input data-idx="{{ it.idx }}" data-field="pcs" value="{{ it.pcs }}" onInput="{{ onItemField }}" inputmode="numeric" placeholder="1" style="width:100%;margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:9px;font-size:13.5px;background:var(--card);color:var(--text);font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)"></div>
+                      </div>
+                      <div style="margin-top:9px;font-size:12px;color:var(--accent-strong);display:flex;align-items:center;gap:6px">Total luas <b style="font-variant-numeric:tabular-nums">{{ it.areaDisplay }}</b><span style="color:var(--muted);font-weight:500">· panjang × lebar × jumlah</span></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.normalQty }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:11px;max-width:240px">
+                      <label style="font-size:12px;font-weight:700;color:var(--muted)">{{ it.qtyLabel }}</label>
+                      <input data-idx="{{ it.idx }}" data-field="qty" value="{{ it.qty }}" onInput="{{ onItemField }}" inputmode="decimal" style="{{ inputStyle }};font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)">
+                    </div>
+                  </sc-if>
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:11px;font-size:12.5px">
+                    <span style="display:inline-flex;align-items:center;gap:6px;color:var(--muted)">Harga dasar <b style="color:var(--text);font-variant-numeric:tabular-nums">{{ it.baseLabel }}</b></span>
+                    <span style="color:var(--border)">|</span>
+                    <span style="color:var(--muted)">Subtotal</span><b style="font-size:15px;color:var(--accent);font-variant-numeric:tabular-nums">{{ it.subtotalDisplay }}</b>
+                  </div>
+                  <div style="margin-top:12px">
+                    <label style="font-size:12px;font-weight:700;color:var(--muted)">Desainer · PIC desain</label>
+                    <select data-idx="{{ it.idx }}" data-field="designerId" value="{{ it.designerId }}" onChange="{{ onItemField }}" style="{{ inputStyle }};cursor:pointer">
+                      <option value="">— Assign nanti —</option>
+                      <sc-for list="{{ designerOptions }}" as="s" hint-placeholder-count="2"><option value="{{ s.id }}">{{ s.name }} · {{ s.job }}</option></sc-for>
+                    </select>
+                    <div style="margin-top:7px;font-size:11.5px;color:var(--muted);display:flex;align-items:flex-start;gap:6px;background:var(--page);border:1px solid var(--border);border-radius:9px;padding:8px 11px"><i data-lucide="info" style="font-size:14px;color:var(--accent);flex-shrink:0;margin-top:1px"></i><span>Operator produksi tidak di-assign di sini — desainer yang menentukan operator setelah desain di-ACC pelanggan.</span></div>
+                  </div>
+                  <div style="margin-top:12px">
+                    <label style="font-size:12px;font-weight:700;color:var(--muted)">Brief untuk desainer</label>
+                    <input data-idx="{{ it.idx }}" data-field="brief" value="{{ it.brief }}" onInput="{{ onItemField }}" placeholder="ukuran, warna, teks, finishing…" style="{{ inputStyle }}" style-focus="border-color:var(--accent)">
+                  </div>
+                  <div style="margin-top:12px">
+                    <label style="font-size:12px;font-weight:700;color:var(--muted)">File desain / referensi <span style="font-weight:500">(bisa pilih beberapa file sekaligus)</span></label>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:7px">
+                      <label style="cursor:pointer;display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-strong);border:1px dashed var(--accent);border-radius:10px;padding:9px 13px;font-weight:700;font-size:12.5px" style-hover="background:#d6f0df"><i data-lucide="cloud-upload" style="font-size:16px"></i>Upload File<input data-idx="{{ it.idx }}" type="file" multiple onChange="{{ onUploadFiles }}" style="display:none"></label>
+                      <sc-for list="{{ it.refsList }}" as="r" hint-placeholder-count="0">
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text);background:var(--page);border:1px solid var(--border);border-radius:8px;padding:6px 9px;max-width:200px"><i data-lucide="paperclip" style="font-size:13px;color:var(--accent);flex-shrink:0"></i><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}</span><button data-idx="{{ it.idx }}" data-ref="{{ r.label }}" onClick="{{ onRemoveRef }}" type="button" style="cursor:pointer;background:transparent;border:none;color:var(--muted);display:flex;padding:0;flex-shrink:0" style-hover="color:#dc2626"><i data-lucide="x" style="font-size:13px"></i></button></span>
+                      </sc-for>
+                    </div>
+                    <input data-idx="{{ it.idx }}" onKeyDown="{{ onAddRefLink }}" placeholder="atau tempel link (drive.google.com/…) lalu tekan Enter" style="{{ inputStyle }};margin-top:8px" style-focus="border-color:var(--accent)">
+                  </div>
+                </div>
+              </sc-for>
+              <button onClick="{{ onAddItem }}" style="cursor:pointer;width:100%;padding:14px;background:transparent;border:none;color:var(--accent);font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:7px" style-hover="background:var(--accent-soft)"><i data-lucide="plus" style="font-size:17px"></i>Tambah Item</button>
+            </div>
+          </div>
+
+          <div style="position:sticky;top:78px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">
+            <div style="margin:-18px -18px 14px;padding:14px 18px;background:var(--accent-soft);border-bottom:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0"><h3 style="margin:0;font-size:15px;font-weight:800;color:var(--accent-strong);display:flex;align-items:center;gap:8px"><i data-lucide="receipt-text" style="font-size:16px;color:var(--accent)"></i>Ringkasan</h3></div>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:13.5px">
+              <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Subtotal ({{ draftCount }} item)</span><span style="font-variant-numeric:tabular-nums">{{ draftSubtotalDisplay }}</span></div>
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--muted)">Diskon</span><input value="{{ draft.discount }}" onInput="{{ onDiscount }}" inputmode="numeric" placeholder="0" style="width:120px;text-align:right;padding:7px 10px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--page);color:var(--text);font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)"></div>
+                <input value="{{ draft.discountNote }}" onInput="{{ onDiscountNote }}" placeholder="Catatan diskon (opsional)" style="width:100%;margin-top:8px;padding:7px 10px;border:1px solid var(--border);border-radius:9px;font-size:12.5px;background:var(--page);color:var(--text)" style-focus="border-color:var(--accent)">
+              </div>
+              <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px dashed var(--border)"><span style="font-weight:800;font-size:15px">Total</span><span style="font-weight:800;font-size:17px;color:var(--accent);font-variant-numeric:tabular-nums">{{ draftTotalDisplay }}</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span style="color:var(--muted)">DP awal</span><input value="{{ draft.dp }}" onInput="{{ onDpInput }}" inputmode="numeric" placeholder="0" style="width:120px;text-align:right;padding:7px 10px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--page);color:var(--text);font-variant-numeric:tabular-nums" style-focus="border-color:var(--accent)"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--muted)">Status bayar</span><span style="{{ draftPayStyle }}">{{ draftPayLabel }}</span></div>
+            </div>
+            <button onClick="{{ onSaveOrder }}" style="cursor:pointer;width:100%;margin-top:16px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 22px -12px var(--accent)" style-hover="background:var(--accent-strong)"><i data-lucide="check" style="font-size:18px"></i>Simpan Order</button>
+            <sc-if value="{{ draftError }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;font-size:12.5px;color:#dc2626;text-align:center">{{ draftErrorMsg }}</div></sc-if>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- TASKS (operator) -->
+      <sc-if value="{{ isTasks }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+          <sc-for list="{{ taskFilters }}" as="tf" hint-placeholder-count="4"><button data-filter="{{ tf.value }}" onClick="{{ onTaskFilter }}" style="{{ tf.style }}">{{ tf.label }}</button></sc-for>
+        </div>
+        <sc-if value="{{ hasTasks }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:{{ taskCols }};gap:14px">
+          <sc-for list="{{ tasksVM }}" as="t" hint-placeholder-count="4">
+            <div data-oid="{{ t.orderId }}" data-iid="{{ t.itemId }}" onClick="{{ onOpenTask }}" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;cursor:pointer;border-left:4px solid {{ t.accent }}" style-hover="transform:translateY(-3px);box-shadow:0 16px 30px -18px rgba(28,25,23,.3)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font-family:'Space Mono',monospace;font-size:11.5px;color:var(--muted)">{{ t.orderId }}</span>
+                <span style="{{ t.badgeStyle }}">{{ t.status }}</span>
+              </div>
+              <div style="font-weight:800;font-size:16px;margin-top:7px">{{ t.productName }}</div>
+              <div style="font-size:12.5px;color:var(--muted);margin-top:2px">{{ t.customerName }} · {{ t.qtyLabel }}</div>
+              <sc-if value="{{ t.hasBrief }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;font-size:12.5px;color:var(--text);background:var(--page);border:1px solid var(--border);border-radius:9px;padding:8px 11px;line-height:1.45">{{ t.brief }}</div></sc-if>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+                <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)"><i data-lucide="calendar" style="font-size:13px"></i>{{ t.deadlineLabel }}</span>
+                <sc-if value="{{ t.payWarn }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:#d97706;background:#fffbeb;border:1px solid #fde68a;padding:3px 8px;border-radius:7px"><i data-lucide="circle-alert" style="font-size:12px"></i>{{ t.payWarnLabel }}</span></sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ noTasks }}" hint-placeholder-val="{{ false }}"><div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:48px;text-align:center;color:var(--muted)"><i data-lucide="party-popper" style="font-size:28px;color:var(--accent)"></i><div style="margin-top:10px;font-size:15px;font-weight:700;color:var(--text)">Tidak ada tugas di filter ini</div><div style="font-size:13px;margin-top:3px">Pilih filter lain untuk melihat tugas Anda.</div></div></sc-if>
+      </div>
+      </sc-if>
+
+      <!-- TASK DETAIL (operator) -->
+      <sc-if value="{{ isTaskDetail }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <button onClick="{{ onBack }}" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--muted);font-weight:700;font-size:13px;margin-bottom:14px;padding:0"><i data-lucide="arrow-left" style="font-size:16px"></i>Kembali ke Tugas Saya</button>
+        <div style="display:grid;grid-template-columns:{{ detailCols }};gap:16px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px">
+              <div style="font-family:'Space Mono',monospace;font-size:12.5px;color:var(--accent);font-weight:700">{{ td.orderId }}</div>
+              <h2 style="margin:5px 0 0;font-size:22px;font-weight:800">{{ td.productName }}</h2>
+              <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:13px;color:var(--muted)">
+                <span style="display:flex;align-items:center;gap:5px"><i data-lucide="user" style="font-size:14px"></i>{{ td.customerName }}</span>
+                <span style="display:flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums"><i data-lucide="hash" style="font-size:14px"></i>{{ td.qtyLabel }}</span>
+                <span style="display:flex;align-items:center;gap:5px"><i data-lucide="calendar" style="font-size:14px"></i>{{ td.deadlineLabel }}</span>
+              </div>
+              <sc-if value="{{ td.payWarn }}" hint-placeholder-val="{{ false }}"><div style="margin-top:13px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 13px"><i data-lucide="circle-alert" style="font-size:16px"></i>{{ td.payWarnLabel }}</div></sc-if>
+              <sc-if value="{{ td.hasContact }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+                  <div style="display:flex;align-items:center;gap:9px;min-width:0">
+                    <span style="width:32px;height:32px;border-radius:9px;background:rgba(18,140,62,.12);color:#128c3e;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="message-circle" style="font-size:17px"></i></span>
+                    <div style="min-width:0"><div style="font-size:11px;color:var(--muted);font-weight:600">Hubungi pelanggan untuk approval</div><div style="font-weight:700;font-size:13.5px;font-variant-numeric:tabular-nums">{{ td.contact }}</div></div>
+                  </div>
+                  <a href="{{ td.waChat }}" target="_blank" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;background:#128c3e;color:#fff;border-radius:10px;padding:9px 14px;font-weight:700;font-size:12.5px;text-decoration:none" style-hover="background:#0e7536"><i data-lucide="message-circle" style="font-size:15px"></i>Chat WA</a>
+                </div>
+                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Template chat — sekali klik</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <a href="{{ td.waAcc }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;text-decoration:none;border-radius:10px;padding:8px 12px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d" style-hover="background:#dcfce7"><i data-lucide="check-circle-2" style="font-size:15px"></i>Minta ACC desain</a>
+                  <a href="{{ td.waRev }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;text-decoration:none;border-radius:10px;padding:8px 12px;background:#fffbeb;border:1px solid #fde68a;color:#b45309" style-hover="background:#fef3c7"><i data-lucide="pencil-line" style="font-size:15px"></i>Tanya revisi</a>
+                  <a href="{{ td.waReady }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;text-decoration:none;border-radius:10px;padding:8px 12px;background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb" style-hover="background:#dbeafe"><i data-lucide="package-check" style="font-size:15px"></i>Siap diambil</a>
+                </div>
+              </div>
+              </sc-if>
+            </div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px">
+              <h3 style="margin:0 0 10px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px"><i data-lucide="file-text" style="font-size:15px;color:var(--accent)"></i>Brief Project</h3>
+              <sc-if value="{{ td.hasBrief }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;line-height:1.6;color:var(--text);background:var(--page);border:1px solid var(--border);border-radius:11px;padding:14px">{{ td.brief }}</div></sc-if>
+              <sc-if value="{{ td.noBrief }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--muted)">Belum ada brief. Hubungi admin untuk detail.</div></sc-if>
+              <sc-if value="{{ td.hasRefs }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:12px">
+                  <div style="font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:8px"><i data-lucide="paperclip" style="font-size:13px;color:var(--accent)"></i>File Referensi Pelanggan</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px">
+                    <sc-for list="{{ td.refs }}" as="r" hint-placeholder-count="1"><a href="{{ r.href }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid var(--border);border-radius:9px;padding:7px 12px;text-decoration:none"><i data-lucide="file-image" style="font-size:14px"></i>{{ r.label }}</a></sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px">
+              <h3 style="margin:0 0 12px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px"><i data-lucide="triangle-alert" style="font-size:15px;color:#dc2626"></i>Catatan Masalah</h3>
+              <sc-if value="{{ td.hasIssues }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:13px">
+                  <sc-for list="{{ td.issues }}" as="iss" hint-placeholder-count="1"><div style="display:flex;gap:8px;align-items:flex-start;font-size:13px;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:9px 12px"><i data-lucide="triangle-alert" style="font-size:14px;margin-top:1px"></i><span><b>{{ iss.type }}</b>{{ iss.noteLabel }}</span></div></sc-for>
+                </div>
+              </sc-if>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <select value="{{ issueType }}" onChange="{{ onIssueType }}" style="{{ inputStyle }};cursor:pointer">
+                  <sc-for list="{{ issueTypes }}" as="x" hint-placeholder-count="5"><option value="{{ x }}">{{ x }}</option></sc-for>
+                </select>
+                <textarea value="{{ issueNote }}" onInput="{{ onIssueNote }}" placeholder="Detail masalah (opsional)…" rows="2" style="{{ inputStyle }};resize:vertical;line-height:1.5" style-focus="border-color:var(--accent)"></textarea>
+                <button onClick="{{ onAddIssue }}" style="cursor:pointer;align-self:flex-start;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px" style-hover="background:#fee2e2"><i data-lucide="plus" style="font-size:15px"></i>Catat Masalah</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="position:sticky;top:78px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">
+            <h3 style="margin:0 0 12px;font-size:15px;font-weight:800">Update Status</h3>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px"><span style="font-size:12px;color:var(--muted);font-weight:600">Saat ini</span><span style="{{ td.badgeStyle }}">{{ td.currentStatus }}</span></div>
+            <sc-if value="{{ td.canAdvance }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ onAdvanceTask }}" style="cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:11px;padding:13px;font-weight:800;font-size:14px;box-shadow:0 10px 22px -12px var(--accent)" style-hover="background:var(--accent-strong)">Tandai Selesai Tahap Ini<i data-lucide="arrow-right" style="font-size:18px"></i></button>
+              <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:7px">Berikutnya: <b style="color:var(--text)">{{ td.nextStatus }}</b></div>
+            </sc-if>
+            <sc-if value="{{ td.cantAdvance }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent-soft);color:var(--accent-strong);border-radius:11px;padding:12px;font-weight:700;font-size:13px;text-align:center"><i data-lucide="check-circle-2" style="font-size:17px"></i>{{ td.finalLabel }}</div></sc-if>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:20px 0 12px">Alur Tahap</div>
+            <div style="display:flex;align-items:flex-start;gap:5px">
+              <sc-for list="{{ td.statusFlow }}" as="sf" hint-placeholder-count="5">
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:center">
+                  <div style="position:relative;width:100%;height:22px;display:flex;align-items:center;justify-content:center">
+                    <span style="{{ sf.leftLineStyle }}"></span>
+                    <span style="{{ sf.rightLineStyle }}"></span>
+                    <span style="{{ sf.dotStyle }}"><sc-if value="{{ sf.showCheck }}" hint-placeholder-val="{{ false }}"><i data-lucide="check" style="font-size:13px"></i></sc-if></span>
+                  </div>
+                  <div style="{{ sf.labelStyle }}">{{ sf.short }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- PRODUCTS -->
+      <sc-if value="{{ isProducts }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+          <div style="display:grid;grid-template-columns:{{ productGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em"><span>Produk</span><span>Satuan</span><span style="text-align:right">Harga Dasar</span><span style="text-align:center">Status</span></div>
+          <sc-for list="{{ productsVM }}" as="p" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:{{ productGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);align-items:center">
+              <span style="font-weight:700;font-size:14px">{{ p.name }}</span>
+              <span style="font-size:13px;color:var(--muted)">/ {{ p.unit }}</span>
+              <span style="text-align:right">
+                <sc-if value="{{ canEditPrice }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:3px;border:1px solid var(--border);border-radius:9px;padding:5px 8px;background:var(--page)"><span style="color:var(--muted);font-size:12px">Rp</span><input data-id="{{ p.id }}" value="{{ p.base }}" onInput="{{ onProductBase }}" inputmode="numeric" style="width:78px;border:none;background:transparent;text-align:right;font-size:13.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums"></span></sc-if>
+                <sc-if value="{{ cantEditPrice }}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ p.baseDisplay }}</span></sc-if>
+              </span>
+              <span style="text-align:center"><span style="font-size:11.5px;font-weight:700;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 9px;border-radius:7px">Aktif</span></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- STOCK -->
+      <sc-if value="{{ isStock }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+          <div style="display:grid;grid-template-columns:{{ stockGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em"><span>Bahan</span><span style="text-align:center">Sisa Stok</span><span style="text-align:center">Status</span><span>Catatan</span></div>
+          <sc-for list="{{ stockVM }}" as="s" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:{{ stockGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);align-items:center">
+              <span style="font-weight:700;font-size:14px">{{ s.name }}</span>
+              <span style="text-align:center">
+                <sc-if value="{{ canEditStock }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:4px"><button data-id="{{ s.id }}" data-d="-1" onClick="{{ onStockAdj }}" style="cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid var(--border);background:var(--page);color:var(--text);font-weight:700">−</button><span style="min-width:62px;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ s.qtyLabel }}</span><button data-id="{{ s.id }}" data-d="1" onClick="{{ onStockAdj }}" style="cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid var(--border);background:var(--page);color:var(--text);font-weight:700">+</button></span></sc-if>
+                <sc-if value="{{ cantEditStock }}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ s.qtyLabel }}</span></sc-if>
+              </span>
+              <span style="text-align:center"><span style="{{ s.pillStyle }}">{{ s.pill }}</span></span>
+              <span style="font-size:12.5px;color:var(--muted)">
+                <sc-if value="{{ s.hasNote }}" hint-placeholder-val="{{ false }}">{{ s.note }}</sc-if>
+                <sc-if value="{{ canNote }}" hint-placeholder-val="{{ false }}"><button data-id="{{ s.id }}" onClick="{{ onLowNote }}" style="cursor:pointer;background:transparent;border:none;color:var(--accent);font-weight:600;font-size:12px;padding:0;display:inline-flex;align-items:center;gap:4px"><i data-lucide="message-square-plus" style="font-size:13px"></i>Tandai hampir habis</button></sc-if>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- REPORTS -->
+      <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+      <div class="sc-view">
+        <div class="no-print" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px">
+          <div style="display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px">
+            <sc-for list="{{ periodTabs }}" as="pt" hint-placeholder-count="3"><button data-period="{{ pt.period }}" onClick="{{ onReportPeriod }}" style="{{ pt.style }}">{{ pt.label }}</button></sc-for>
+          </div>
+          <button onClick="{{ onPrint }}" style="cursor:pointer;margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 15px;font-weight:700;font-size:13px;color:var(--text)" style-hover="border-color:var(--accent);color:var(--accent)"><i data-lucide="download" style="font-size:16px;color:var(--accent)"></i>Ekspor / Cetak</button>
+        </div>
+        <div style="display:grid;grid-template-columns:{{ kpiCols }};gap:14px;margin-bottom:16px">
+          <sc-for list="{{ reportKpis }}" as="r" hint-placeholder-count="4">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)">
+              <div style="font-size:12.5px;font-weight:600;color:var(--muted)">{{ r.label }}</div>
+              <div style="font-size:24px;font-weight:800;margin-top:8px;font-variant-numeric:tabular-nums;color:{{ r.color }}">{{ r.value }}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">{{ r.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:{{ dashCols }};gap:16px;margin-bottom:16px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px">
+              <div><h3 style="margin:0;font-size:15px;font-weight:800">Nilai Order Masuk</h3><div style="font-size:12px;color:var(--muted);margin-top:2px">7 hari terakhir</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:var(--muted);font-weight:600">Total</div><div style="font-size:16px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums">{{ revTrendTotal }}</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:8px;height:150px;padding-top:14px">
+              <sc-for list="{{ revBars }}" as="b" hint-placeholder-count="7">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px">
+                  <div style="font-size:9.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap">{{ b.valLabel }}</div>
+                  <div style="width:100%;max-width:34px;border-radius:7px 7px 3px 3px;background:{{ b.barBg }};height:{{ b.heightPct }}%;transition:height .4s cubic-bezier(.2,.7,.2,1)"></div>
+                  <div style="text-align:center;line-height:1.1"><div style="font-size:12px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums">{{ b.dayNum }}</div><div style="font-size:9.5px;color:var(--muted);font-weight:600">{{ b.dayDow }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:15px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px"><i data-lucide="trophy" style="color:#d97706;font-size:16px"></i><h3 style="margin:0;font-size:15px;font-weight:800">Produk Terlaris</h3></div>
+            <sc-if value="{{ hasTopProducts }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:6px 0">
+                <sc-for list="{{ topProducts }}" as="p" hint-placeholder-count="5">
+                  <div style="padding:9px 18px">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                      <span style="width:20px;height:20px;flex-shrink:0;border-radius:6px;background:var(--accent-soft);color:var(--accent-strong);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums">{{ p.rank }}</span>
+                      <span style="font-weight:700;font-size:13.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                      <span style="font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums">{{ p.qtyLabel }}</span>
+                      <span style="font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;min-width:74px;text-align:right">{{ p.revDisplay }}</span>
+                    </div>
+                    <div style="height:6px;border-radius:4px;background:var(--page);overflow:hidden;margin-left:30px"><div style="height:100%;border-radius:4px;background:var(--accent);width:{{ p.barPct }}%"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noTopProducts }}" hint-placeholder-val="{{ false }}"><div style="padding:24px;color:var(--muted);font-size:13px">Belum ada penjualan pada periode ini.</div></sc-if>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:{{ dashCols }};gap:16px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:15px 18px;border-bottom:1px solid var(--border)"><h3 style="margin:0;font-size:15px;font-weight:800">Pembayaran Belum Lunas</h3></div>
+            <sc-for list="{{ unpaidVM }}" as="o" hint-placeholder-count="4">
+              <div data-id="{{ o.id }}" onClick="{{ onOpenOrder }}" style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);cursor:pointer" style-hover="background:var(--accent-soft)">
+                <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px">{{ o.customerName }}</div><div style="font-family:'Space Mono',monospace;font-size:11.5px;color:var(--muted)">{{ o.id }}</div></div>
+                <span style="{{ o.payStyle }}">{{ o.payLabel }}</span>
+                <div style="text-align:right;min-width:96px"><div style="font-size:12px;color:var(--muted)">Sisa</div><div style="font-weight:800;font-size:14px;color:#dc2626;font-variant-numeric:tabular-nums">{{ o.remainingDisplay }}</div></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ allPaid }}" hint-placeholder-val="{{ false }}"><div style="padding:20px;color:var(--muted);font-size:13px">Semua order sudah lunas. 🎉</div></sc-if>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
+            <div style="padding:15px 18px;border-bottom:1px solid var(--border)"><h3 style="margin:0;font-size:15px;font-weight:800">Laporan Masalah</h3></div>
+            <sc-if value="{{ hasIssues }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ dashIssues }}" as="g" hint-placeholder-count="3"><div style="padding:12px 18px;border-bottom:1px solid var(--border)"><div style="font-weight:700;font-size:13px;color:#b91c1c">{{ g.type }}</div><div style="font-size:12px;color:var(--muted);margin-top:2px">{{ g.where }}</div></div></sc-for>
+            </sc-if>
+            <sc-if value="{{ noIssues }}" hint-placeholder-val="{{ false }}"><div style="padding:20px;color:var(--muted);font-size:13px">Tidak ada masalah tercatat.</div></sc-if>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showNota }}" hint-placeholder-val="{{ false }}">
+<div class="no-print" style="position:fixed;inset:0;z-index:90;background:rgba(20,30,24,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 20px">
+  <div style="width:100%;max-width:660px">
+    <div class="no-print" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <button onClick="{{ onCloseNota }}" style="cursor:pointer;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:11px;padding:9px 14px;font-weight:700;font-size:13px" style-hover="background:rgba(255,255,255,.24)"><i data-lucide="arrow-left" style="font-size:16px"></i>Tutup</button>
+      <button onClick="{{ onPrintNota }}" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:#fff;border:none;color:#15803d;border-radius:11px;padding:10px 17px;font-weight:800;font-size:13.5px;box-shadow:0 10px 24px -10px rgba(0,0,0,.4)" style-hover="background:#f0fdf4"><i data-lucide="printer" style="font-size:17px"></i>Cetak / Simpan PDF</button>
+    </div>
+    <div class="print-area" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,.5);color:#1c1917">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:26px 30px;border-bottom:3px solid #15803d">
+        <div style="display:flex;align-items:center;gap:13px">
+          <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px"><i data-lucide="printer"></i></div>
+          <div>
+            <div style="font-weight:800;font-size:18px;letter-spacing:.06em;color:#1c1917">SAHABAT PRINTING</div>
+            <div style="font-size:11.5px;color:#78716c;margin-top:2px;line-height:1.5">Jl. Percetakan No. 12, Yogyakarta<br>0274-123456 · sahabatprinting</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:20px;font-weight:800;letter-spacing:.04em;color:#15803d">NOTA</div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:#57534e;margin-top:3px">{{ nota.id }}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:22px 30px;border-bottom:1px solid #eee">
+        <div>
+          <div style="font-size:10.5px;font-weight:700;color:#a8a29e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Ditagihkan kepada</div>
+          <div style="font-weight:800;font-size:16px">{{ nota.customerName }}</div>
+          <div style="font-size:12.5px;color:#78716c;margin-top:2px">{{ nota.contact }}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="display:flex;justify-content:flex-end;gap:8px;font-size:12.5px;margin-bottom:4px"><span style="color:#a8a29e">Tanggal</span><span style="font-weight:700;min-width:130px">{{ nota.createdLabel }}</span></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;font-size:12.5px;margin-bottom:7px"><span style="color:#a8a29e">Deadline</span><span style="font-weight:700;min-width:130px">{{ nota.deadlineLabel }}</span></div>
+          <span style="{{ nota.payStyle }}">{{ nota.payLabel }}</span>
+        </div>
+      </div>
+
+      <div style="padding:6px 30px 0">
+        <div style="display:grid;grid-template-columns:30px 1fr 80px 110px 120px;gap:10px;padding:11px 0;border-bottom:2px solid #1c1917;font-size:10.5px;font-weight:800;color:#57534e;text-transform:uppercase;letter-spacing:.04em">
+          <span>No</span><span>Produk</span><span style="text-align:center">Qty</span><span style="text-align:right">Harga</span><span style="text-align:right">Subtotal</span>
+        </div>
+        <sc-for list="{{ nota.items }}" as="it" hint-placeholder-count="2">
+          <div style="display:grid;grid-template-columns:30px 1fr 80px 110px 120px;gap:10px;padding:12px 0;border-bottom:1px solid #f0efed;font-size:13px;align-items:center">
+            <span style="color:#a8a29e;font-variant-numeric:tabular-nums">{{ it.no }}</span>
+            <span style="font-weight:700">{{ it.productName }}</span>
+            <span style="text-align:center;color:#57534e;font-variant-numeric:tabular-nums">{{ it.qtyLabel }}</span>
+            <span style="text-align:right;color:#57534e;font-variant-numeric:tabular-nums">{{ it.baseLabel }}</span>
+            <span style="text-align:right;font-weight:700;font-variant-numeric:tabular-nums">{{ it.subtotalDisplay }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;padding:18px 30px 6px">
+        <div style="width:280px;display:flex;flex-direction:column;gap:8px;font-size:13px">
+          <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Subtotal</span><span style="font-variant-numeric:tabular-nums">{{ nota.subtotalDisplay }}</span></div>
+          <sc-if value="{{ nota.hasDiscount }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between"><span style="color:#78716c">Diskon</span><span style="font-variant-numeric:tabular-nums;color:#dc2626">{{ nota.discountDisplay }}</span></div></sc-if>
+          <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px dashed #d6d3d1"><span style="font-weight:800;font-size:14px">Total</span><span style="font-weight:800;font-size:15px;font-variant-numeric:tabular-nums">{{ nota.totalDisplay }}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#78716c">Dibayar</span><span style="font-variant-numeric:tabular-nums">{{ nota.dpDisplay }}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:9px 12px;background:#f0fdf4;border-radius:9px"><span style="font-weight:800;color:#166534">Sisa</span><span style="font-weight:800;font-variant-numeric:tabular-nums;color:#166534">{{ nota.remainingDisplay }}</span></div>
+        </div>
+      </div>
+
+      <div style="padding:18px 30px 26px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-top:1px solid #eee;margin-top:10px">
+        <div style="font-size:11px;color:#a8a29e;line-height:1.6;max-width:280px">Terima kasih atas kepercayaan Anda.<br>Barang yang sudah dicetak tidak dapat dikembalikan. Mohon cek hasil sebelum meninggalkan toko.</div>
+        <div style="text-align:center"><div style="font-size:11.5px;color:#78716c;margin-bottom:34px">Hormat kami,</div><div style="border-top:1px solid #1c1917;padding-top:5px;font-size:11.5px;font-weight:700;width:140px">Sahabat Printing</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div class="no-print" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#1c1917;color:#fff;padding:13px 20px;border-radius:13px;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:9px;box-shadow:0 16px 34px -14px rgba(0,0,0,.5);animation:scToast .3s ease"><i data-lucide="check-circle-2" style="font-size:17px;color:#4ade80"></i>{{ toast }}</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  blankItem() { return { id: 'it' + Math.random().toString(36).slice(2, 7), productId: '', productName: '', base: 0, unit: '', qty: 1, dim: false, dimL: '', dimW: '', pcs: '1', brief: '', refs: '', designerId: '', operatorId: '', status: 'Order Masuk', issues: [] }; }
+  blankDraft() { return { customerName: '', contact: '', deadline: this.tomorrowYmd(), notes: '', items: [this.blankItem()], discount: 0, discountNote: '', dp: 0 }; }
+  tomorrowYmd() { const d = new Date('2026-06-25T00:00:00'); d.setDate(d.getDate() + 1); const p = (x) => String(x).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+  areaQty(it) { const L = Number(it.dimL) || 0, W = Number(it.dimW) || 0, p = Number(it.pcs) || 0; const a = (L / 100) * (W / 100) * p; return a ? Number(a.toFixed(4)) : 0; }
+
+  state = {
+    screen: 'login', role: null, userId: null, view: 'dashboard',
+    selectedOrderId: null, task: null, search: '', statusFilter: 'all', taskFilter: 'all',
+    theme: 'A', toast: null, vw: 1200,
+    notaOrderId: null, reportPeriod: 'month',
+    payInput: '', issueType: 'Brief belum jelas', issueNote: '',
+    nextNum: 1043,
+    draft: this.blankDraft(),
+    products: [
+      { id: 'p1', name: 'Banner', base: 25000, unit: 'm²', dim: true },
+      { id: 'p2', name: 'Poster Full Color', base: 5000, unit: 'lembar' },
+      { id: 'p3', name: 'Poster BW', base: 3000, unit: 'lembar' },
+      { id: 'p4', name: 'Kartu Nama', base: 50000, unit: 'box' },
+      { id: 'p5', name: 'Stiker', base: 10000, unit: 'lembar' },
+      { id: 'p6', name: 'Spanduk', base: 28000, unit: 'm²', dim: true },
+      { id: 'p7', name: 'Brosur A5', base: 1500, unit: 'lembar' },
+      { id: 'p8', name: 'X-Banner', base: 75000, unit: 'pcs' },
+      { id: 'p9', name: 'Undangan', base: 4500, unit: 'pcs' },
+    ],
+    staff: [
+      { id: 's1', name: 'Rian', job: 'Desainer', type: 'designer' },
+      { id: 's2', name: 'Putri', job: 'Desainer', type: 'designer' },
+      { id: 's3', name: 'Joko', job: 'Operator Cetak', type: 'production' },
+      { id: 's4', name: 'Eka', job: 'Operator Finishing', type: 'production' },
+    ],
+    stock: [
+      { id: 'm1', name: 'Flexi Banner', qty: 48, unit: 'meter', min: 30, note: '' },
+      { id: 'm2', name: 'Art Paper 260gr', qty: 12, unit: 'rim', min: 15, note: 'Hampir habis — perlu order' },
+      { id: 'm3', name: 'Tinta Eco Solvent', qty: 6, unit: 'liter', min: 4, note: '' },
+      { id: 'm4', name: 'Stiker Vinyl', qty: 22, unit: 'roll', min: 10, note: '' },
+      { id: 'm5', name: 'Kertas Undangan', qty: 8, unit: 'pack', min: 12, note: '' },
+    ],
+    orders: [
+      { id: 'ORD-1042', customerName: 'Andi Pratama', contact: '0812-3344-1290', createdAt: '2026-06-25', deadline: '2026-06-28', notes: 'Pelanggan langganan, minta hasil rapi.', discount: 10000, discountNote: 'Langganan', dp: 60000,
+        items: [ { id: 'a1', productId: 'p1', productName: 'Banner', base: 25000, unit: 'meter', qty: 2, brief: 'Banner promo 2m, dominan oranye, logo di tengah, teks "GRAND OPENING".', refs: 'logo-grandopening.png, referensi-warna.jpg', designerId: 's1', operatorId: 's3', status: 'Proses Cetak', issues: [] },
+                 { id: 'a2', productId: 'p2', productName: 'Poster Full Color', base: 5000, unit: 'lembar', qty: 10, brief: 'Poster A3 full color, tema sama dengan banner.', designerId: 's2', operatorId: 's4', status: 'Finishing', issues: [] } ] },
+      { id: 'ORD-1041', customerName: 'CV Maju Jaya', contact: '0856-7788-0021', createdAt: '2026-06-24', deadline: '2026-06-26', notes: '', discount: 0, discountNote: '', dp: 175000,
+        items: [ { id: 'b1', productId: 'p4', productName: 'Kartu Nama', base: 50000, unit: 'box', qty: 2, brief: 'Kartu nama 2 box, desain minimalis, finishing doff.', designerId: 's1', operatorId: 's3', status: 'Selesai', issues: [] },
+                 { id: 'b2', productId: 'p7', productName: 'Brosur A5', base: 1500, unit: 'lembar', qty: 500, brief: 'Brosur A5 dua sisi, 500 lembar.', designerId: 's2', operatorId: 's3', status: 'Siap Diambil', issues: [] } ] },
+      { id: 'ORD-1040', customerName: 'Siti Aminah', contact: '0813-2211-7766', createdAt: '2026-06-24', deadline: '2026-06-30', notes: 'Acara pernikahan 5 Juli.', discount: 0, discountNote: '', dp: 0,
+        items: [ { id: 'c1', productId: 'p9', productName: 'Undangan', base: 4500, unit: 'pcs', qty: 200, brief: 'Undangan 200 pcs tema rustic.', refs: 'moodboard-rustic.pdf, drive.google.com/contoh-undangan', designerId: 's2', operatorId: '', status: 'Proses Desain', issues: [ { type: 'Brief belum jelas', note: 'Warna tema belum dikonfirmasi pelanggan.' } ] } ] },
+      { id: 'ORD-1039', customerName: 'Toko Berkah', contact: '0821-9090-3322', createdAt: '2026-06-25', deadline: '2026-06-27', notes: '', discount: 5000, discountNote: 'Nego', dp: 40000,
+        items: [ { id: 'd1', productId: 'p6', productName: 'Spanduk', base: 28000, unit: 'meter', qty: 3, brief: 'Spanduk promo 3m.', refs: 'logo-toko-berkah.png, contoh-spanduk.jpg', designerId: 's1', operatorId: 's3', status: 'Siap Cetak', issues: [] },
+                 { id: 'd2', productId: 'p5', productName: 'Stiker', base: 10000, unit: 'lembar', qty: 100, brief: 'Stiker label produk, 100 lembar.', designerId: 's1', operatorId: '', status: 'Order Masuk', issues: [] } ] },
+      { id: 'ORD-1038', customerName: 'Budi Santoso', contact: '0878-1212-5544', createdAt: '2026-06-23', deadline: '2026-06-26', notes: '', discount: 0, discountNote: '', dp: 75000,
+        items: [ { id: 'e1', productId: 'p8', productName: 'X-Banner', base: 75000, unit: 'pcs', qty: 2, brief: 'X-Banner stand pameran, 2 pcs.', refs: 'referensi-pameran.jpg', designerId: 's1', operatorId: '', status: 'Menunggu Approval', issues: [ { type: 'File desain belum siap', note: 'Menunggu logo vektor dari pelanggan.' } ] } ] },
+      { id: 'ORD-1037', customerName: 'PT Sinar Abadi', contact: '0811-4545-9090', createdAt: '2026-06-22', deadline: '2026-06-24', notes: 'Corporate order.', discount: 25000, discountNote: 'Corporate', dp: 565000,
+        items: [ { id: 'f1', productId: 'p3', productName: 'Poster BW', base: 3000, unit: 'lembar', qty: 50, brief: 'Poster BW pengumuman internal.', designerId: 's2', operatorId: 's4', status: 'Selesai', issues: [] },
+                 { id: 'f2', productId: 'p1', productName: 'Banner', base: 25000, unit: 'meter', qty: 5, brief: 'Banner lobby 5m.', designerId: 's1', operatorId: 's3', status: 'Selesai', issues: [] },
+                 { id: 'f3', productId: 'p4', productName: 'Kartu Nama', base: 50000, unit: 'box', qty: 5, brief: 'Kartu nama direksi 5 box.', designerId: 's1', operatorId: 's3', status: 'Selesai', issues: [] } ] },
+      { id: 'ORD-1036', customerName: 'Dewi Lestari', contact: '0857-3030-1188', createdAt: '2026-06-21', deadline: '2026-06-25', notes: '', discount: 0, discountNote: '', dp: 30000,
+        items: [ { id: 'g1', productId: 'p7', productName: 'Brosur A5', base: 1500, unit: 'lembar', qty: 1000, brief: 'Brosur promo toko, 1000 lembar.', designerId: 's2', operatorId: 's3', status: 'Proses Cetak', issues: [ { type: 'Bahan hampir habis', note: 'Art paper 260gr tersisa sedikit.' } ] } ] },
+    ],
+  };
+
+  STATUSES = ['Order Masuk', 'Menunggu DP', 'Proses Desain', 'Menunggu Approval', 'Siap Cetak', 'Proses Cetak', 'Finishing', 'Siap Diambil', 'Selesai', 'Dibatalkan'];
+  DESIGN_FLOW = ['Order Masuk', 'Proses Desain', 'Menunggu Approval', 'Siap Cetak'];
+  PROD_FLOW = ['Siap Cetak', 'Proses Cetak', 'Finishing', 'Siap Diambil', 'Selesai'];
+  MAIN_FLOW = ['Order Masuk', 'Menunggu DP', 'Proses Desain', 'Menunggu Approval', 'Siap Cetak', 'Proses Cetak', 'Finishing', 'Siap Diambil', 'Selesai'];
+  nextStatus(cur, flow) { const i = flow.indexOf(cur); return (i >= 0 && i < flow.length - 1) ? flow[i + 1] : null; }
+  nextLabelOf(cur) { const ni = this.nextStatus(cur, this.MAIN_FLOW); return ni ? 'Berikutnya: ' + ni : ''; }
+  ISSUE_TYPES = ['Brief belum jelas', 'File desain belum siap', 'Bahan hampir habis', 'Masalah mesin', 'Deadline terlalu cepat', 'Revisi terlalu banyak', 'Masalah finishing'];
+  TODAY = '2026-06-25';
+
+  componentDidMount() {
+    this.setState({ vw: window.innerWidth });
+    this._onResize = () => this.setState({ vw: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+    this.applyTheme();
+    this.paintIcons();
+  }
+  componentDidUpdate() { this.applyTheme(); this.paintIcons(); }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  iconSvg(name) {
+    this._ic = this._ic || {};
+    if (name in this._ic) return this._ic[name];
+    var html = '';
+    try {
+      var holder = document.createElement('div');
+      var i = document.createElement('i'); i.setAttribute('data-licon', name);
+      holder.appendChild(i); document.body.appendChild(holder);
+      window.lucide.createIcons({ nameAttr: 'data-licon' });
+      html = holder.innerHTML; document.body.removeChild(holder);
+    } catch (e) { html = ''; }
+    this._ic[name] = html;
+    return html;
+  }
+  paintIcons() {
+    if (!this._root || !window.lucide) return;
+    var nodes = this._root.querySelectorAll('i[data-lucide]');
+    for (var k = 0; k < nodes.length; k++) {
+      var el = nodes[k]; var name = el.getAttribute('data-lucide');
+      if (el.getAttribute('data-painted') === name) continue;
+      el.innerHTML = this.iconSvg(name);
+      el.setAttribute('data-painted', name);
+    }
+  }
+  setRoot = (el) => { this._root = el; this.applyTheme(); };
+  themeVars() {
+    if (this.state.theme === 'B') return { '--accent': '#1d9a4f', '--accent-strong': '#15803d', '--accent-soft': '#e2f4e9', '--page': '#f3f6f4', '--card': '#ffffff', '--border': '#e1e9e4', '--text': '#16201b', '--muted': '#67726b', '--side-bg': '#15241b', '--side-fg': '#dfeae2', '--side-muted': '#8aa193', '--side-active-bg': '#21342a', '--side-active-fg': '#5fd089', '--side-border': '#243a2d', '--radius': '10px', '--shadow': '0 1px 2px rgba(20,40,28,.06),0 12px 30px -16px rgba(20,40,28,.2)' };
+    return { '--accent': '#15803d', '--accent-strong': '#166534', '--accent-soft': '#e4f5ea', '--page': '#f6faf7', '--card': '#ffffff', '--border': '#e2ebe5', '--text': '#16201b', '--muted': '#6b766f', '--side-bg': '#ffffff', '--side-fg': '#3a443e', '--side-muted': '#9aa69f', '--side-active-bg': '#e4f5ea', '--side-active-fg': '#15803d', '--side-border': '#e7efe9', '--radius': '14px', '--shadow': '0 1px 2px rgba(20,40,28,.05),0 10px 26px -14px rgba(20,40,28,.16)' };
+  }
+  applyTheme() { if (!this._root) return; const v = this.themeVars(); for (const k in v) this._root.style.setProperty(k, v[k]); }
+
+  // ---------- helpers ----------
+  fmtRp(n) { n = Math.round(Number(n) || 0); return 'Rp' + n.toLocaleString('id-ID'); }
+  fmtRpShort(n) { n = Math.round(Number(n) || 0); if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1).replace('.', ',') + 'jt'; if (n >= 1000) return Math.round(n / 1000) + 'rb'; return String(n); }
+  dateLabelFull(d) { if (!d) return '—'; const mm = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; const p = String(d).split('-'); if (p.length !== 3) return d; return `${parseInt(p[2])} ${mm[parseInt(p[1]) - 1]} ${p[0]}`; }
+  waNumber(c) { let d = String(c || '').replace(/\D/g, ''); if (!d) return ''; if (d[0] === '0') d = '62' + d.slice(1); else if (d.slice(0, 2) !== '62' && d[0] === '8') d = '62' + d; return d; }
+  waLink(c, text) { const n = this.waNumber(c); const base = n ? 'https://wa.me/' + n : 'https://wa.me/'; return base + (text ? '?text=' + encodeURIComponent(text) : ''); }
+  initials(name) { return (name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(); }
+  staffName(id) { const s = this.state.staff.find(x => x.id === id); return s ? s.name : 'Belum di-assign'; }
+  staffJob(id) { const s = this.state.staff.find(x => x.id === id); return s ? s.job : ''; }
+  prod(id) { return this.state.products.find(p => p.id === id); }
+  parseRefs(str) { if (!str) return []; return String(str).split(/[,\n]/).map(s => s.trim()).filter(Boolean).map(s => { const isLink = /^https?:\/\//i.test(s) || /\.(com|id|net|org|co)\b/i.test(s) || s.includes('/'); return { label: s, isLink, href: isLink ? (/^https?:/i.test(s) ? s : 'https://' + s) : null }; }); }
+  calc(o) {
+    const subtotal = o.items.reduce((a, it) => a + (Number(it.base) || 0) * (Number(it.qty) || 0), 0);
+    const total = Math.max(0, subtotal - (Number(o.discount) || 0));
+    const dp = Number(o.dp) || 0;
+    const remaining = Math.max(0, total - dp);
+    let pay = 'unpaid'; if (dp >= total && total > 0) pay = 'paid'; else if (dp > 0) pay = 'partial';
+    return { subtotal, total, dp, remaining, pay };
+  }
+  stageOf(o) {
+    const idxs = o.items.map(it => this.STATUSES.indexOf(it.status)).filter(i => i >= 0);
+    if (!idxs.length) return 'Order Masuk';
+    const allDone = o.items.every(it => it.status === 'Selesai');
+    if (allDone) return 'Selesai';
+    const active = o.items.filter(it => it.status !== 'Selesai').map(it => this.STATUSES.indexOf(it.status));
+    return this.STATUSES[Math.min(...active)];
+  }
+  statusMeta(s) {
+    const m = {
+      'Order Masuk': ['#f1f5f9', '#475569'], 'Menunggu DP': ['#fffbeb', '#b45309'], 'Proses Desain': ['#f5f3ff', '#7c3aed'],
+      'Menunggu Approval': ['#eff6ff', '#2563eb'], 'Siap Cetak': ['#ecfeff', '#0891b2'], 'Proses Cetak': ['#eef2ff', '#4f46e5'],
+      'Finishing': ['#f0fdfa', '#0d9488'], 'Siap Diambil': ['#f0fdf4', '#16a34a'], 'Selesai': ['#dcfce7', '#15803d'], 'Dibatalkan': ['#fef2f2', '#dc2626'],
+    };
+    return m[s] || m['Order Masuk'];
+  }
+  badge(s, extra) { const [bg, fg] = this.statusMeta(s); return `display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:7px;white-space:nowrap;background:${bg};color:${fg};${extra || ''}`; }
+  payMeta(pay) { return pay === 'paid' ? ['Lunas', '#16a34a', '#f0fdf4', '#bbf7d0'] : pay === 'partial' ? ['DP / Sebagian', '#b45309', '#fffbeb', '#fde68a'] : ['Belum Bayar', '#dc2626', '#fef2f2', '#fecaca']; }
+  payBadge(pay) { const [l, fg, bg, bd] = this.payMeta(pay); return { label: l, style: `display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:${bg};color:${fg};border:1px solid ${bd}` }; }
+  dateLabel(d) { if (!d) return '—'; const mm = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']; const p = d.split('-'); if (p.length !== 3) return d; return `${parseInt(p[2])} ${mm[parseInt(p[1]) - 1]}`; }
+  unitWord(unit) { return unit === 'meter' ? 'Ukuran (m)' : unit === 'box' || unit === 'pcs' || unit === 'rim' ? 'Jumlah' : 'Jumlah'; }
+
+  toast(msg) { this.setState({ toast: msg }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2200); }
+
+  // ---------- nota / invoice ----------
+  onShowNota = () => this.setState({ notaOrderId: this.state.selectedOrderId });
+  onCloseNota = () => this.setState({ notaOrderId: null });
+  onPrintNota = () => { setTimeout(() => window.print(), 30); };
+
+  // ---------- reports period ----------
+  onReportPeriod = (e) => this.setState({ reportPeriod: e.currentTarget.dataset.period });
+  recentDays(n) { const out = []; const base = new Date(this.TODAY + 'T00:00:00'); for (let i = n - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); out.push(d); } return out; }
+  ymd(d) { const p = (x) => String(x).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+  inPeriod(createdAt, period) {
+    if (!createdAt) return false;
+    if (period === 'today') return createdAt === this.TODAY;
+    if (period === 'week') { const days = this.recentDays(7).map(d => this.ymd(d)); return days.includes(createdAt); }
+    return true; // month / all
+  }
+
+  // ---------- nav / auth ----------
+  isStaffRole(role) { return role === 'designer' || role === 'production'; }
+  defaultUser(role) { return role === 'designer' ? 's1' : role === 'production' ? 's3' : null; }
+  defaultView(role) { return this.isStaffRole(role) ? 'tasks' : 'dashboard'; }
+  onLogin = (e) => { const role = e.currentTarget.dataset.role; this.setState({ screen: 'app', role, userId: this.defaultUser(role), view: this.defaultView(role), selectedOrderId: null, task: null }); };
+  onSwitchRole = (e) => { const role = e.currentTarget.dataset.role; this.setState({ role, userId: this.defaultUser(role), view: this.defaultView(role), selectedOrderId: null, task: null, search: '', statusFilter: 'all', taskFilter: 'all' }); };
+  onLogout = () => { this.setState({ screen: 'login', role: null, userId: null }); };
+  onNav = (e) => { this.setState({ view: e.currentTarget.dataset.view, selectedOrderId: null, task: null }); };
+  onBack = () => { const v = this.state.view === 'taskDetail' ? 'tasks' : (this.state.view === 'orderDetail' ? 'orders' : this.state.view === 'create' ? 'orders' : (this.isStaffRole(this.state.role) ? 'tasks' : 'dashboard')); this.setState({ view: v, selectedOrderId: null, task: null }); };
+  onOpenOrder = (e) => { this.setState({ selectedOrderId: e.currentTarget.dataset.id, view: 'orderDetail' }); };
+  onOpenTask = (e) => { this.setState({ task: { orderId: e.currentTarget.dataset.oid, itemId: e.currentTarget.dataset.iid }, view: 'taskDetail' }); };
+  toggleTheme = () => this.setState(s => ({ theme: s.theme === 'A' ? 'B' : 'A' }));
+
+  // ---------- orders list ----------
+  onSearch = (e) => this.setState({ search: e.currentTarget.value });
+  onStatusFilter = (e) => this.setState({ statusFilter: e.currentTarget.value });
+  onScope = (e) => this.setState({ scope: e.currentTarget.dataset.scope });
+
+  // ---------- order detail ----------
+  mutateOrder(id, fn) { this.setState(s => ({ orders: s.orders.map(o => o.id === id ? fn({ ...o }) : o) })); }
+  onItemStatus = (e) => { const iid = e.currentTarget.dataset.iid; const val = e.currentTarget.value; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => it.id === iid ? { ...it, status: val } : it) })); this.toast('Status diperbarui'); };
+  onAdvanceItem = (e) => { const iid = e.currentTarget.dataset.iid; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => { if (it.id !== iid) return it; const ni = this.nextStatus(it.status, this.MAIN_FLOW); return ni ? { ...it, status: ni } : it; }) })); this.toast('Status diperbarui'); };
+  onCancelItem = (e) => { const iid = e.currentTarget.dataset.iid; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => it.id === iid ? { ...it, status: 'Dibatalkan' } : it) })); this.toast('Item dibatalkan'); };
+  onPayInput = (e) => this.setState({ payInput: e.currentTarget.value.replace(/[^0-9]/g, '') });
+  onAddPay = () => { const amt = Number(this.state.payInput) || 0; if (!amt) return; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, dp: (Number(o.dp) || 0) + amt })); this.setState({ payInput: '' }); this.toast('Pembayaran dicatat'); };
+  onMarkPaid = () => { const o = this.state.orders.find(x => x.id === this.state.selectedOrderId); const c = this.calc(o); this.mutateOrder(o.id, x => ({ ...x, dp: c.total })); this.toast('Order ditandai lunas'); };
+
+  // ---------- create ----------
+  onCustField = (e) => { const f = e.currentTarget.dataset.field; const v = e.currentTarget.value; this.setState(s => ({ draft: { ...s.draft, [f]: v } })); };
+  onItemField = (e) => {
+    const idx = +e.currentTarget.dataset.idx; const f = e.currentTarget.dataset.field; const v = e.currentTarget.value;
+    this.setState(s => {
+      const items = s.draft.items.map((it, i) => {
+        if (i !== idx) return it;
+        const next = { ...it };
+        if (f === 'productId') { const p = this.prod(v); next.productId = v; next.productName = p ? p.name : ''; next.base = p ? p.base : 0; next.unit = p ? p.unit : ''; next.dim = !!(p && p.dim); if (next.dim) { next.pcs = next.pcs || '1'; next.qty = this.areaQty(next); } else { next.qty = (Number(next.qty) > 0 ? next.qty : '1'); } }
+        else if (f === 'qty') { next.qty = v.replace(/[^0-9.]/g, ''); }
+        else if (f === 'dimL' || f === 'dimW' || f === 'pcs') { next[f] = v.replace(/[^0-9]/g, ''); next.qty = this.areaQty(next); }
+        else next[f] = v;
+        return next;
+      });
+      return { draft: { ...s.draft, items } };
+    });
+  };
+  onAddItem = () => this.setState(s => ({ draft: { ...s.draft, items: [...s.draft.items, this.blankItem()] } }));
+  onRemoveItem = (e) => { const idx = +e.currentTarget.dataset.idx; this.setState(s => ({ draft: { ...s.draft, items: s.draft.items.filter((_, i) => i !== idx) } })); };
+  refsArr(str) { return str ? String(str).split(',').map(x => x.trim()).filter(Boolean) : []; }
+  onUploadFiles = (e) => { const idx = +e.currentTarget.dataset.idx; const files = Array.from(e.currentTarget.files || []); if (!files.length) return; const names = files.map(f => f.name); this.setState(s => ({ draft: { ...s.draft, items: s.draft.items.map((it, i) => i !== idx ? it : { ...it, refs: [...this.refsArr(it.refs), ...names].join(', ') }) } })); e.currentTarget.value = ''; this.toast(files.length + ' file ditambahkan'); };
+  onAddRefLink = (e) => { if (e.key !== 'Enter') return; e.preventDefault(); const idx = +e.currentTarget.dataset.idx; const v = e.currentTarget.value.trim(); if (!v) return; this.setState(s => ({ draft: { ...s.draft, items: s.draft.items.map((it, i) => i !== idx ? it : { ...it, refs: [...this.refsArr(it.refs), v].join(', ') }) } })); e.currentTarget.value = ''; };
+  onRemoveRef = (e) => { const idx = +e.currentTarget.dataset.idx; const ref = e.currentTarget.dataset.ref; this.setState(s => ({ draft: { ...s.draft, items: s.draft.items.map((it, i) => i !== idx ? it : { ...it, refs: this.refsArr(it.refs).filter(x => x !== ref).join(', ') }) } })); };
+  onAssignOperator = (e) => { const v = e.currentTarget.value; const t = this.state.task; this.mutateOrder(t.orderId, o => ({ ...o, items: o.items.map(it => it.id === t.itemId ? { ...it, operatorId: v } : it) })); this.toast(v ? 'Operator produksi di-assign' : 'Assign operator dihapus'); };
+  onDiscount = (e) => { const v = e.currentTarget.value.replace(/[^0-9]/g, ''); this.setState(s => ({ draft: { ...s.draft, discount: v } })); };
+  onDiscountNote = (e) => { const v = e.currentTarget.value; this.setState(s => ({ draft: { ...s.draft, discountNote: v } })); };
+  onDpInput = (e) => { const v = e.currentTarget.value.replace(/[^0-9]/g, ''); this.setState(s => ({ draft: { ...s.draft, dp: v } })); };
+  onSaveOrder = () => {
+    const d = this.state.draft;
+    const valid = d.customerName.trim() && d.items.some(it => it.productId && Number(it.qty) > 0);
+    if (!valid) { this._showErr = true; this.toast('Lengkapi nama pelanggan & minimal 1 item'); this.forceUpdate(); return; }
+    const id = 'ORD-' + this.state.nextNum;
+    const items = d.items.filter(it => it.productId && Number(it.qty) > 0).map(it => ({ ...it, qty: Number(it.qty) || 0, status: it.designerId ? 'Proses Desain' : 'Order Masuk' }));
+    const order = { id, customerName: d.customerName.trim(), contact: d.contact || '—', createdAt: this.TODAY, deadline: this.parseDeadline(d.deadline), notes: d.notes, discount: Number(d.discount) || 0, discountNote: d.discountNote, dp: Number(d.dp) || 0, items };
+    this._showErr = false;
+    this.setState(s => ({ orders: [order, ...s.orders], nextNum: s.nextNum + 1, draft: this.blankDraft(), selectedOrderId: id, view: 'orderDetail' }));
+    this.toast('Order ' + id + ' tersimpan');
+  };
+  parseDeadline(d) { return d && d.trim() ? d.trim() : ''; }
+
+  // ---------- tasks ----------
+  onTaskFilter = (e) => this.setState({ taskFilter: e.currentTarget.dataset.filter });
+  onAdvanceTask = () => { const t = this.state.task; const role = this.state.role; const flow = role === 'designer' ? this.DESIGN_FLOW : this.PROD_FLOW; this.mutateOrder(t.orderId, o => ({ ...o, items: o.items.map(it => { if (it.id !== t.itemId) return it; const ni = this.nextStatus(it.status, flow); return ni ? { ...it, status: ni } : it; }) })); this.toast('Tahap diselesaikan'); };
+  onTaskSetStatus = (e) => { const st = e.currentTarget.dataset.status; const t = this.state.task; this.mutateOrder(t.orderId, o => ({ ...o, items: o.items.map(it => it.id === t.itemId ? { ...it, status: st } : it) })); this.toast('Status: ' + st); };
+  onIssueType = (e) => this.setState({ issueType: e.currentTarget.value });
+  onIssueNote = (e) => this.setState({ issueNote: e.currentTarget.value });
+  onAddIssue = () => { const t = this.state.task; const type = this.state.issueType; const note = this.state.issueNote.trim(); this.mutateOrder(t.orderId, o => ({ ...o, items: o.items.map(it => it.id === t.itemId ? { ...it, issues: [...it.issues, { type, note }] } : it) })); this.setState({ issueNote: '' }); this.toast('Masalah dicatat'); };
+
+  // ---------- products / stock ----------
+  onProductBase = (e) => { const id = e.currentTarget.dataset.id; const v = e.currentTarget.value.replace(/[^0-9]/g, ''); this.setState(s => ({ products: s.products.map(p => p.id === id ? { ...p, base: Number(v) || 0 } : p) })); };
+  onStockAdj = (e) => { const id = e.currentTarget.dataset.id; const d = Number(e.currentTarget.dataset.d); this.setState(s => ({ stock: s.stock.map(m => m.id === id ? { ...m, qty: Math.max(0, m.qty + d) } : m) })); };
+  onLowNote = (e) => { const id = e.currentTarget.dataset.id; this.setState(s => ({ stock: s.stock.map(m => m.id === id ? { ...m, note: 'Dilaporkan hampir habis oleh ' + this.staffName(s.userId) } : m) })); this.toast('Catatan stok terkirim'); };
+
+  // ---------- derived issues ----------
+  allIssues() { const out = []; this.state.orders.forEach(o => o.items.forEach(it => it.issues.forEach(iss => out.push({ type: iss.type, note: iss.note, where: o.id + ' · ' + o.customerName + ' · ' + it.productName })))); return out; }
+
+  renderVals() {
+    const S = this.state;
+    const isLogin = S.screen === 'login';
+    const isApp = S.screen === 'app';
+    const role = S.role; const isStaff = this.isStaffRole(role); const isManager = role === 'owner' || role === 'admin';
+    const isMobile = S.vw < 880;
+    const canCreate = role === 'admin' || role === 'owner';
+    const canEditPrice = isManager;
+    const canEditPay = isManager;
+    const canEditStatus = isManager;
+    const canEditStock = isManager;
+    const roleLabel = role === 'owner' ? 'Pemilik' : role === 'admin' ? 'Admin / Kasir' : role === 'designer' ? 'Desainer' : 'Operator Produksi';
+    const userLabel = isStaff ? this.staffName(S.userId) : (role === 'owner' ? 'Pak Hendra' : 'Mbak Rina');
+
+    // nav
+    const navDefs = {
+      owner: [['dashboard', 'Dashboard', 'layout-dashboard'], ['orders', 'Pesanan', 'clipboard-list'], ['products', 'Produk & Harga', 'tag'], ['stock', 'Stok Bahan', 'boxes'], ['reports', 'Laporan', 'bar-chart-3']],
+      admin: [['dashboard', 'Dashboard', 'layout-dashboard'], ['orders', 'Pesanan', 'clipboard-list'], ['create', 'Buat Order', 'plus-circle'], ['products', 'Produk & Harga', 'tag'], ['stock', 'Stok Bahan', 'boxes']],
+      designer: [['tasks', 'Tugas Desain', 'pen-tool'], ['stock', 'Stok Bahan', 'boxes']],
+      production: [['tasks', 'Tugas Produksi', 'printer'], ['stock', 'Stok Bahan', 'boxes']],
+    };
+    const activeView = (S.view === 'orderDetail') ? 'orders' : (S.view === 'taskDetail') ? 'tasks' : S.view;
+    const navItems = (navDefs[role] || []).map(([view, label, icon]) => {
+      const active = activeView === view;
+      const base = 'display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;border:none;border-radius:11px;padding:10px 12px;font-weight:600;font-size:13.5px;transition:background .14s,color .14s;';
+      const style = active ? base + 'background:var(--side-active-bg);color:var(--side-active-fg);font-weight:700' : base + 'background:transparent;color:var(--side-fg)';
+      let badge = null;
+      if (view === 'tasks') { const c = this.myTasks().length; if (c) badge = c; }
+      return { view, label, icon, style, badge };
+    });
+
+    // role switch (topbar)
+    const rsBase = 'display:flex;align-items:center;gap:5px;cursor:pointer;border:none;border-radius:8px;padding:6px 10px;font-weight:700;font-size:12px;transition:all .14s;';
+    const roleSwitch = [['owner', 'Owner', 'crown'], ['admin', 'Admin', 'user-cog'], ['designer', 'Desain', 'pen-tool'], ['production', 'Produksi', 'printer']].map(([id, label, icon]) => {
+      const on = role === id;
+      return { id, label, short: label, icon, style: on ? rsBase + 'background:var(--accent);color:#fff' : rsBase + 'background:transparent;color:var(--muted)', labelStyle: isMobile ? 'display:none' : '' };
+    });
+
+    // page title
+    const titles = { dashboard: 'Dashboard', orders: 'Daftar Pesanan', orderDetail: 'Detail Pesanan', create: 'Buat Order Baru', tasks: 'Tugas Saya', taskDetail: 'Detail Tugas', products: 'Produk & Harga Dasar', stock: 'Stok Bahan', reports: 'Laporan Bisnis' };
+    const crumbs = { dashboard: 'Ringkasan', orders: 'Operasional', orderDetail: 'Pesanan', create: 'Pesanan', tasks: 'Produksi', taskDetail: 'Produksi', products: 'Master Data', stock: 'Master Data', reports: 'Analitik' };
+
+    const v = S.view;
+    const out = {
+      isLogin, isApp, isMobile, theme: S.theme, toggleTheme: this.toggleTheme,
+      setRoot: this.setRoot, toast: S.toast,
+      brand: 'SAHABAT PRINTING', roleLabel, userLabel, userInitials: this.initials(userLabel),
+      navItems, onNav: this.onNav, roleSwitch, onSwitchRole: this.onSwitchRole, onLogout: this.onLogout,
+      onLogin: this.onLogin, showSidebar: !isMobile, showTitle: true,
+      pageTitle: (v === 'tasks' ? (role === 'designer' ? 'Tugas Desain' : 'Tugas Produksi') : (titles[v] || '')), crumb: crumbs[v] || '',
+      themeLabelStyle: isMobile ? 'display:none' : '',
+      loginRoles: [
+        { id: 'owner', icon: 'crown', iconBg: '#e4f5ea', iconFg: '#15803d', title: 'Pemilik', who: 'Owner', desc: 'Pantau seluruh order, pembayaran, stok, dan laporan bisnis dalam satu dashboard.' },
+        { id: 'admin', icon: 'user-cog', iconBg: '#eff6ff', iconFg: '#2563eb', title: 'Admin / Kasir', who: 'Front office', desc: 'Buat multi-order, hitung harga, catat pembayaran, dan assign tugas ke tim.' },
+        { id: 'designer', icon: 'pen-tool', iconBg: '#f5f3ff', iconFg: '#7c3aed', title: 'Desainer', who: 'Tim Desain', desc: 'Kerjakan brief desain, kelola approval pelanggan, lalu serahkan ke produksi saat siap cetak.' },
+        { id: 'production', icon: 'printer', iconBg: '#ecfeff', iconFg: '#0891b2', title: 'Operator Produksi', who: 'Cetak & Finishing', desc: 'Ambil pekerjaan siap cetak, jalankan cetak dan finishing hingga pesanan siap diambil.' },
+      ],
+      inputStyle: 'width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13.5px;background:var(--page);color:var(--text)',
+      allStatuses: this.STATUSES, issueTypes: this.ISSUE_TYPES, issueType: S.issueType, issueNote: S.issueNote,
+      onIssueType: this.onIssueType, onIssueNote: this.onIssueNote, onAddIssue: this.onAddIssue,
+      canCreate, canEditPrice, cantEditPrice: !canEditPrice, canEditPay, canEditStatus, cantEditStatus: !canEditStatus, canEditStock, cantEditStock: !canEditStock, canNote: isStaff,
+      // view flags
+      isDashboard: v === 'dashboard', isOrders: v === 'orders', isOrderDetail: v === 'orderDetail', isCreate: v === 'create', isTasks: v === 'tasks', isTaskDetail: v === 'taskDetail', isProducts: v === 'products', isStock: v === 'stock', isReports: v === 'reports',
+      onBack: this.onBack, onOpenOrder: this.onOpenOrder,
+      // layout cols
+      kpiCols: isMobile ? '1fr 1fr' : 'repeat(4,1fr)',
+      dashCols: isMobile ? '1fr' : '1.55fr 1fr',
+      dashGrid3: isMobile ? '1fr' : (S.vw < 1180 ? '1.4fr 1fr' : '1.6fr 1fr 1fr'),
+      detailCols: isMobile ? '1fr' : '1.7fr 1fr',
+      taskCols: isMobile ? '1fr' : 'repeat(2,1fr)',
+      orderGrid: isMobile ? '1.4fr .7fr 1fr .9fr .8fr' : '1.5fr 1.4fr 1fr 1.2fr 1fr .9fr',
+      productGrid: '2fr 1fr 1.2fr 1fr',
+      stockGrid: isMobile ? '1.3fr 1.2fr 1fr 1.4fr' : '1.4fr 1.3fr 1fr 1.8fr',
+    };
+
+    // ----- dashboard / shared order vms -----
+    const ordersAll = S.orders;
+    const activeOrders = ordersAll.filter(o => !o.items.every(it => it.status === 'Selesai' || it.status === 'Dibatalkan'));
+    const unpaidOrders = ordersAll.filter(o => this.calc(o).pay !== 'paid');
+    const outstanding = unpaidOrders.reduce((a, o) => a + this.calc(o).remaining, 0);
+    const revenueMonth = ordersAll.reduce((a, o) => a + this.calc(o).dp, 0);
+    const issues = this.allIssues();
+
+    const orderVM = (o) => {
+      const c = this.calc(o); const pb = this.payBadge(c.pay); const stage = this.stageOf(o); const pm = this.payMeta(c.pay);
+      const payShort = c.pay === 'paid' ? 'Lunas' : c.pay === 'partial' ? 'DP' : 'Belum';
+      const payStickerStyle = `display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;background:${pm[2]};color:${pm[1]};border:1px solid ${pm[3]}`;
+      return { id: o.id, customerName: o.customerName, itemsLabel: o.items.length + ' item', deadlineLabel: this.dateLabel(o.deadline), stage, badgeStyle: this.badge(stage), totalDisplay: this.fmtRp(c.total), payLabel: pb.label, payStyle: pb.style, payShort, payStickerStyle, remainingDisplay: this.fmtRp(c.remaining) };
+    };
+
+    if (out.isDashboard) {
+      out.kpis = [
+        { label: 'Pesanan Aktif', value: String(activeOrders.length), sub: 'dari ' + ordersAll.length + ' total order', icon: 'clipboard-list', iconBg: '#e4f5ea', iconFg: '#15803d' },
+        { label: 'Belum Lunas', value: String(unpaidOrders.length), sub: this.fmtRp(outstanding) + ' outstanding', icon: 'wallet', iconBg: '#fef2f2', iconFg: '#dc2626' },
+        { label: 'Pendapatan Bulan Ini', value: this.fmtRp(revenueMonth), sub: 'total DP & pelunasan masuk', icon: 'trending-up', iconBg: '#f0fdf4', iconFg: '#16a34a' },
+        { label: 'Masalah Produksi', value: String(issues.length), sub: 'perlu tindak lanjut', icon: 'triangle-alert', iconBg: '#fffbeb', iconFg: '#d97706' },
+      ];
+      out.dashRecent = ordersAll.slice(0, 5).map(orderVM);
+      out.dashIssues = issues.map(g => ({ type: g.type, where: g.where }));
+      out.hasIssues = issues.length > 0; out.noIssues = issues.length === 0;
+      out.dashStock = S.stock.map(m => { const low = m.qty <= m.min; return { name: m.name, qtyLabel: m.qty + ' ' + m.unit, pill: low ? 'Menipis' : 'Aman', pillStyle: low ? 'font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#fffbeb;color:#b45309;border:1px solid #fde68a' : 'font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0' }; });
+    }
+
+    // ----- orders list -----
+    if (out.isOrders) {
+      const q = S.search.trim().toLowerCase();
+      const scope = S.scope || 'active';
+      let base = ordersAll;
+      if (q) base = base.filter(o => o.customerName.toLowerCase().includes(q) || o.id.toLowerCase().includes(q));
+      const isDone = o => o.items.length > 0 && o.items.every(it => it.status === 'Selesai' || it.status === 'Dibatalkan');
+      const activeList = base.filter(o => !isDone(o));
+      const doneList = base.filter(o => isDone(o));
+      const list = scope === 'done' ? doneList : activeList;
+      out.search = S.search; out.onSearch = this.onSearch; out.scope = scope; out.onScope = this.onScope;
+      const tabBase = 'cursor:pointer;border:none;border-radius:9px;padding:8px 14px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px;transition:all .14s;';
+      out.scopeTabs = [['active', 'Sedang Berjalan', activeList.length], ['done', 'Selesai', doneList.length]].map(([sc, label, count]) => { const on = scope === sc; return { scope: sc, label, count, style: on ? tabBase + 'background:var(--accent);color:#fff' : tabBase + 'background:transparent;color:var(--muted)', countStyle: 'font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:0 5px;' + (on ? 'background:rgba(255,255,255,.25);color:#fff' : 'background:var(--border);color:var(--muted)') }; });
+      out.ordersVM = list.map(orderVM);
+      out.noOrders = list.length === 0;
+      out.noOrdersLabel = scope === 'done' ? 'Belum ada pesanan yang selesai.' : 'Tidak ada pesanan berjalan.';
+    }
+
+    // ----- order detail -----
+    if (out.isOrderDetail) {
+      const o = ordersAll.find(x => x.id === S.selectedOrderId);
+      if (o) {
+        const c = this.calc(o); const pb = this.payBadge(c.pay);
+        out.od = {
+          id: o.id, customerName: o.customerName, contact: o.contact, deadlineLabel: this.dateLabel(o.deadline), createdLabel: this.dateLabel(o.createdAt),
+          notes: o.notes, hasNotes: !!(o.notes && o.notes.trim()), itemsLabel: o.items.length + ' item',
+          payLabel: pb.label, payStyle: pb.style.replace('font-size:11px', 'font-size:12px;padding:5px 11px'),
+          subtotalDisplay: this.fmtRp(c.subtotal), discountDisplay: '−' + this.fmtRp(o.discount || 0), totalDisplay: this.fmtRp(c.total), dpDisplay: this.fmtRp(c.dp), remainingDisplay: this.fmtRp(c.remaining),
+          items: o.items.map(it => ({ id: it.id, productName: it.productName, qtyLabel: it.qty + ' ' + it.unit, baseLabel: this.fmtRp(it.base) + '/' + it.unit, subtotalDisplay: this.fmtRp((Number(it.base) || 0) * (Number(it.qty) || 0)), brief: it.brief, hasBrief: !!(it.brief && it.brief.trim()), refs: this.parseRefs(it.refs), hasRefs: !!(it.refs && it.refs.trim()), designerName: this.staffName(it.designerId), operatorName: it.operatorId ? this.staffName(it.operatorId) : 'Belum di-assign', status: it.status, badgeStyle: this.badge(it.status), canAdvance: !!this.nextStatus(it.status, this.MAIN_FLOW), nextLabel: this.nextLabelOf(it.status), done: (it.status === 'Selesai' || it.status === 'Dibatalkan'), doneLabel: it.status === 'Dibatalkan' ? 'Item dibatalkan' : 'Item selesai', hasIssues: it.issues.length > 0, issues: it.issues.map(x => ({ type: x.type, noteLabel: x.note ? ' — ' + x.note : '' })) })),
+        };
+        out.payInput = S.payInput; out.onPayInput = this.onPayInput; out.onAddPay = this.onAddPay; out.onMarkPaid = this.onMarkPaid; out.onAdvanceItem = this.onAdvanceItem; out.onCancelItem = this.onCancelItem; out.onShowNota = this.onShowNota;
+      }
+    }
+
+    // ----- create -----
+    if (out.isCreate) {
+      const d = S.draft;
+      out.draft = d;
+      out.draftItems = d.items.map((it, i) => { const base = Number(it.base) || 0; const qty = Number(it.qty) || 0; return { idx: i, num: i + 1, removable: d.items.length > 1, productId: it.productId, qty: it.qty, dim: !!it.dim, normalQty: !it.dim, dimL: it.dimL, dimW: it.dimW, pcs: it.pcs, designerId: it.designerId, brief: it.brief, refs: it.refs, refsList: this.parseRefs(it.refs), baseLabel: it.productId ? this.fmtRp(base) + ' / ' + it.unit : '—', subtotalDisplay: this.fmtRp(base * qty), areaDisplay: qty > 0 ? qty.toLocaleString('id-ID', { maximumFractionDigits: 4 }) + ' m²' : '—', qtyLabel: (it.unit && !it.dim) ? this.unitWord(it.unit) : 'Jumlah' }; });
+      out.productOptions = S.products.map(p => ({ id: p.id, name: p.name + ' · ' + this.fmtRp(p.base) + '/' + p.unit }));
+      out.designerOptions = S.staff.filter(s => s.type === 'designer').map(s => ({ id: s.id, name: s.name, job: s.job }));
+      out.operatorOptions = S.staff.filter(s => s.type === 'production').map(s => ({ id: s.id, name: s.name, job: s.job }));
+      const subtotal = d.items.reduce((a, it) => a + (Number(it.base) || 0) * (Number(it.qty) || 0), 0);
+      const total = Math.max(0, subtotal - (Number(d.discount) || 0));
+      const dp = Number(d.dp) || 0; let pay = 'unpaid'; if (dp >= total && total > 0) pay = 'paid'; else if (dp > 0) pay = 'partial';
+      const pb = this.payBadge(pay);
+      out.draftCount = d.items.filter(it => it.productId).length || d.items.length;
+      out.draftItemsLabel = d.items.length + ' item';
+      out.draftSubtotalDisplay = this.fmtRp(subtotal); out.draftTotalDisplay = this.fmtRp(total);
+      out.draftPayLabel = pb.label; out.draftPayStyle = pb.style;
+      out.onCustField = this.onCustField; out.onItemField = this.onItemField; out.onAddItem = this.onAddItem; out.onRemoveItem = this.onRemoveItem;
+      out.onDiscount = this.onDiscount; out.onDiscountNote = this.onDiscountNote; out.onDpInput = this.onDpInput; out.onSaveOrder = this.onSaveOrder;
+      out.onUploadFiles = this.onUploadFiles; out.onAddRefLink = this.onAddRefLink; out.onRemoveRef = this.onRemoveRef;
+      out.draftError = !!this._showErr; out.draftErrorMsg = 'Isi nama pelanggan dan minimal 1 item dengan produk & jumlah.';
+    }
+
+    // ----- tasks -----
+    if (out.isTasks) {
+      const mine = this.myTasks();
+      const groups = role === 'designer'
+        ? [['all', 'Semua'], ['active', 'Aktif'], ['Proses Desain', 'Proses Desain'], ['Menunggu Approval', 'Approval'], ['Siap Cetak', 'Siap Cetak']]
+        : [['all', 'Semua'], ['active', 'Aktif'], ['Proses Cetak', 'Proses Cetak'], ['Finishing', 'Finishing'], ['Siap Diambil', 'Siap Diambil']];
+      out.taskFilters = groups.map(([value, label]) => { const on = S.taskFilter === value; const b = 'cursor:pointer;border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-weight:700;font-size:12.5px;transition:all .14s;'; return { value, label, style: on ? b + 'background:var(--accent);color:#fff;border-color:var(--accent)' : b + 'background:var(--card);color:var(--muted)' }; });
+      let list = mine;
+      if (S.taskFilter === 'active') list = mine.filter(t => t.status !== 'Selesai' && t.status !== 'Dibatalkan');
+      else if (S.taskFilter !== 'all') list = mine.filter(t => t.status === S.taskFilter);
+      out.tasksVM = list.map(t => { const [, fg] = this.statusMeta(t.status); return { orderId: t.orderId, itemId: t.itemId, productName: t.productName, customerName: t.customerName, qtyLabel: t.qty + ' ' + t.unit, deadlineLabel: this.dateLabel(t.deadline), status: t.status, badgeStyle: this.badge(t.status), accent: fg, brief: t.brief, hasBrief: !!(t.brief && t.brief.trim()), payWarn: t.payWarn, payWarnLabel: t.payWarnLabel }; });
+      out.hasTasks = list.length > 0; out.noTasks = list.length === 0;
+      out.onTaskFilter = this.onTaskFilter; out.onOpenTask = this.onOpenTask;
+    }
+
+    // ----- task detail -----
+    if (out.isTaskDetail && S.task) {
+      const o = ordersAll.find(x => x.id === S.task.orderId);
+      const it = o && o.items.find(x => x.id === S.task.itemId);
+      if (o && it) {
+        const c = this.calc(o);
+        const cur = this.STATUSES.indexOf(it.status);
+        const flowNames = role === 'designer' ? this.DESIGN_FLOW : role === 'production' ? this.PROD_FLOW : this.STATUSES.filter(s => s !== 'Dibatalkan');
+        const shortNames = { 'Order Masuk': 'Masuk', 'Menunggu DP': 'DP', 'Proses Desain': 'Desain', 'Menunggu Approval': 'Approval', 'Siap Cetak': 'Siap', 'Proses Cetak': 'Cetak', 'Finishing': 'Finish', 'Siap Diambil': 'Ambil', 'Selesai': 'Selesai' };
+        const lineDone = 'height:2px;background:var(--accent);'; const lineTodo = 'height:2px;background:var(--border);';
+        const flow = flowNames.map((name, i) => {
+          const idx = this.STATUSES.indexOf(name); const isCur = name === it.status; const done = idx < cur; const reached = idx <= cur;
+          const first = i === 0; const last = i === flowNames.length - 1;
+          let dotStyle = 'position:relative;z-index:1;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;';
+          if (isCur) dotStyle += 'background:var(--accent);color:#fff;box-shadow:0 0 0 4px var(--accent-soft);';
+          else if (done) dotStyle += 'background:var(--accent);color:#fff;';
+          else dotStyle += 'background:var(--card);border:2px solid var(--border);color:var(--muted);';
+          const leftLineStyle = 'position:absolute;left:0;right:50%;top:50%;transform:translateY(-50%);' + (first ? 'display:none;' : (reached ? lineDone : lineTodo));
+          const rightLineStyle = 'position:absolute;left:50%;right:0;top:50%;transform:translateY(-50%);' + (last ? 'display:none;' : (done ? lineDone : lineTodo));
+          let labelStyle = 'font-size:9.5px;text-align:center;margin-top:6px;line-height:1.15;white-space:nowrap;';
+          labelStyle += isCur ? 'color:var(--accent-strong);font-weight:800;' : done ? 'color:var(--text);font-weight:600;' : 'color:var(--muted);font-weight:600;';
+          return { name, short: shortNames[name] || name, isCur, showCheck: done, dotStyle, leftLineStyle, rightLineStyle, labelStyle };
+        });
+        out.td = {
+          orderId: o.id, productName: it.productName, customerName: o.customerName, qtyLabel: it.qty + ' ' + it.unit, deadlineLabel: 'Deadline ' + this.dateLabel(o.deadline),
+          brief: it.brief, hasBrief: !!(it.brief && it.brief.trim()), noBrief: !(it.brief && it.brief.trim()), refs: this.parseRefs(it.refs), hasRefs: !!(it.refs && it.refs.trim()),
+          hasIssues: it.issues.length > 0, issues: it.issues.map(x => ({ type: x.type, noteLabel: x.note ? ' — ' + x.note : '' })),
+          payWarn: false, payWarnLabel: '',
+          currentStatus: it.status, badgeStyle: this.badge(it.status, 'font-size:12.5px;padding:5px 12px'),
+          canAdvance: !!this.nextStatus(it.status, (role === 'designer' ? this.DESIGN_FLOW : this.PROD_FLOW)),
+          nextStatus: this.nextStatus(it.status, (role === 'designer' ? this.DESIGN_FLOW : this.PROD_FLOW)),
+          cantAdvance: !this.nextStatus(it.status, (role === 'designer' ? this.DESIGN_FLOW : this.PROD_FLOW)),
+          finalLabel: role === 'designer' ? 'Desain selesai — sudah diserahkan ke produksi' : 'Pesanan selesai',
+          statusFlow: flow,
+        };
+        const nm = o.customerName; const pid = o.id; const pr = it.productName;
+        const tAcc = `Halo ${nm} 🙏\n\nDesain untuk pesanan *${pid} — ${pr}* sudah siap. Mohon dicek & dikonfirmasi:\n✅ ACC (setuju), atau\n✏️ Revisi (mohon sebutkan bagian yang diubah)\n\nTerima kasih,\nSahabat Printing.`;
+        const tRev = `Halo ${nm}, untuk pesanan *${pid} — ${pr}* boleh dibantu info bagian mana yang ingin direvisi? Akan segera kami kerjakan. Terima kasih 🙏\nSahabat Printing.`;
+        const tReady = `Halo ${nm}, kabar baik! Pesanan *${pid} — ${pr}* sudah selesai dan siap diambil di toko. Ditunggu ya 🙏\nSahabat Printing.`;
+        out.td.contact = o.contact; out.td.hasContact = !!(o.contact && /\d/.test(o.contact));
+        out.td.waChat = this.waLink(o.contact, ''); out.td.waAcc = this.waLink(o.contact, tAcc); out.td.waRev = this.waLink(o.contact, tRev); out.td.waReady = this.waLink(o.contact, tReady);
+        out.td.showAssign = role === 'designer';
+        out.td.operatorId = it.operatorId || ''; out.td.operatorName = it.operatorId ? this.staffName(it.operatorId) : ''; out.td.assignDone = !!it.operatorId;
+        out.operatorOptions = this.state.staff.filter(s => s.type === 'production').map(s => ({ id: s.id, name: s.name, job: s.job }));
+        out.onAssignOperator = this.onAssignOperator;
+        out.onAdvanceTask = this.onAdvanceTask;
+      }
+    }
+
+    // ----- products -----
+    if (out.isProducts) out.productsVM = S.products.map(p => ({ id: p.id, name: p.name, unit: p.unit, base: p.base, baseDisplay: this.fmtRp(p.base) }));
+
+    // ----- stock -----
+    if (out.isStock) out.stockVM = S.stock.map(m => { const low = m.qty <= m.min; return { id: m.id, name: m.name, qtyLabel: m.qty + ' ' + m.unit, pill: low ? 'Menipis' : 'Aman', pillStyle: low ? 'font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:#fffbeb;color:#b45309;border:1px solid #fde68a' : 'font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0', note: m.note, hasNote: !!(m.note && m.note.trim()) }; });
+    out.onProductBase = this.onProductBase; out.onStockAdj = this.onStockAdj; out.onLowNote = this.onLowNote;
+
+    // ----- reports -----
+    if (out.isReports) {
+      const period = S.reportPeriod;
+      const periodOrders = ordersAll.filter(o => this.inPeriod(o.createdAt, period));
+      const periodRevenue = periodOrders.reduce((a, o) => a + this.calc(o).dp, 0);
+      const periodValue = periodOrders.reduce((a, o) => a + this.calc(o).total, 0);
+      const periodUnpaid = periodOrders.filter(o => this.calc(o).pay !== 'paid');
+      const periodOutstanding = periodUnpaid.reduce((a, o) => a + this.calc(o).remaining, 0);
+      const periodWord = period === 'today' ? 'hari ini' : period === 'week' ? '7 hari terakhir' : 'bulan ini';
+
+      const ptBase = 'cursor:pointer;border:none;border-radius:9px;padding:8px 14px;font-weight:700;font-size:12.5px;transition:all .14s;';
+      out.reportPeriod = period;
+      out.periodTabs = [['today', 'Hari Ini'], ['week', '7 Hari'], ['month', 'Bulan Ini']].map(([p, label]) => ({ period: p, label, style: period === p ? ptBase + 'background:var(--accent);color:#fff' : ptBase + 'background:transparent;color:var(--muted)' }));
+      out.onReportPeriod = this.onReportPeriod; out.onPrint = this.onPrintNota;
+
+      out.reportKpis = [
+        { label: 'Order ' + (period === 'today' ? 'Hari Ini' : period === 'week' ? '7 Hari' : 'Bulan Ini'), value: String(periodOrders.length), sub: 'periode ' + periodWord, color: 'var(--text)' },
+        { label: 'Nilai Order', value: this.fmtRp(periodValue), sub: 'total nilai pesanan', color: 'var(--text)' },
+        { label: 'Pendapatan Masuk', value: this.fmtRp(periodRevenue), sub: 'DP + pelunasan', color: '#16a34a' },
+        { label: 'Belum Lunas', value: this.fmtRp(periodOutstanding), sub: periodUnpaid.length + ' order', color: '#dc2626' },
+      ];
+
+      // 7-day intake-value trend (always last 7 days)
+      const dow = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+      const day7 = this.recentDays(7).map(d => { const key = this.ymd(d); const val = ordersAll.filter(o => o.createdAt === key).reduce((a, o) => a + this.calc(o).total, 0); return { key, val, num: d.getDate(), dow: dow[d.getDay()] }; });
+      const maxV = Math.max(1, ...day7.map(x => x.val));
+      out.revBars = day7.map(x => ({ heightPct: x.val > 0 ? Math.max(6, Math.round((x.val / maxV) * 100)) : 2, valLabel: x.val > 0 ? this.fmtRpShort(x.val) : '', dayNum: String(x.num), dayDow: x.dow, isToday: x.key === this.TODAY, barBg: x.key === this.TODAY ? 'var(--accent)' : 'color-mix(in srgb, var(--accent) 38%, #ffffff)' }));
+      out.revTrendTotal = this.fmtRp(day7.reduce((a, x) => a + x.val, 0));
+
+      // top products in period
+      const agg = {};
+      periodOrders.forEach(o => o.items.forEach(it => { if (it.status === 'Dibatalkan') return; const k = it.productName || '—'; const rev = (Number(it.base) || 0) * (Number(it.qty) || 0); if (!agg[k]) agg[k] = { name: k, qty: 0, rev: 0, unit: it.unit }; agg[k].qty += Number(it.qty) || 0; agg[k].rev += rev; }));
+      const top = Object.values(agg).sort((a, b) => b.rev - a.rev).slice(0, 5);
+      const maxRev = Math.max(1, ...top.map(p => p.rev));
+      out.topProducts = top.map((p, i) => ({ rank: i + 1, name: p.name, qtyLabel: p.qty + ' ' + (p.unit || ''), revDisplay: this.fmtRp(p.rev), barPct: Math.max(5, Math.round((p.rev / maxRev) * 100)) }));
+      out.hasTopProducts = top.length > 0; out.noTopProducts = top.length === 0;
+
+      out.unpaidVM = periodUnpaid.map(orderVM);
+      out.allPaid = periodUnpaid.length === 0;
+      out.hasIssues = issues.length > 0; out.noIssues = issues.length === 0;
+      out.dashIssues = issues.map(g => ({ type: g.type, where: g.where }));
+    }
+
+    // ----- nota / invoice -----
+    out.showNota = !!S.notaOrderId;
+    if (S.notaOrderId) {
+      const o = ordersAll.find(x => x.id === S.notaOrderId);
+      if (o) {
+        const c = this.calc(o); const pb = this.payBadge(c.pay);
+        out.nota = {
+          id: o.id, customerName: o.customerName, contact: o.contact,
+          createdLabel: this.dateLabelFull(o.createdAt), deadlineLabel: this.dateLabelFull(o.deadline),
+          notes: o.notes, hasNotes: !!(o.notes && o.notes.trim()),
+          payLabel: pb.label, payStyle: pb.style.replace('font-size:11px', 'font-size:12px;padding:4px 11px'),
+          subtotalDisplay: this.fmtRp(c.subtotal), discountDisplay: '−' + this.fmtRp(o.discount || 0), hasDiscount: (o.discount || 0) > 0, discountNote: o.discountNote,
+          totalDisplay: this.fmtRp(c.total), dpDisplay: this.fmtRp(c.dp), remainingDisplay: this.fmtRp(c.remaining), remaining: c.remaining,
+          items: o.items.map((it, i) => ({ no: i + 1, productName: it.productName, qtyLabel: it.qty + ' ' + it.unit, baseLabel: this.fmtRp(it.base), subtotalDisplay: this.fmtRp((Number(it.base) || 0) * (Number(it.qty) || 0)) })),
+        };
+        out.onCloseNota = this.onCloseNota; out.onPrintNota = this.onPrintNota;
+      }
+    }
+
+    return out;
+  }
+
+  myTasks() {
+    const uid = this.state.userId; const role = this.state.role; const out = [];
+    const siap = this.STATUSES.indexOf('Siap Cetak');
+    this.state.orders.forEach(o => o.items.forEach(it => {
+      const idx = this.STATUSES.indexOf(it.status);
+      let mine = false;
+      if (role === 'designer') mine = it.designerId === uid && idx <= siap && it.status !== 'Dibatalkan';
+      else if (role === 'production') mine = it.operatorId === uid && idx >= siap && it.status !== 'Dibatalkan';
+      if (mine) { out.push({ orderId: o.id, itemId: it.id, productName: it.productName, customerName: o.customerName, qty: it.qty, unit: it.unit, deadline: o.deadline, status: it.status, brief: it.brief, payWarn: false, payWarnLabel: '' }); }
+    }));
+    return out;
+  }
+}
+</script>
+</body>
+</html>
