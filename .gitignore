@@ -1,0 +1,6 @@
+# Claude Code local (machine-specific) settings
+.claude/settings.local.json
+
+# Dependencies / build artifacts (safety net; sub-projects also ignore these)
+node_modules/
+dist/

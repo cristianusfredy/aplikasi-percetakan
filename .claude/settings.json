@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes shadcn@latest add button card badge input label textarea select dialog separator tabs sheet -y)",
+      "Bash(npm run *)"
+    ]
+  }
+}

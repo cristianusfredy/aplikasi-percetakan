@@ -15,7 +15,7 @@
 <style>
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
-body { font-family: 'Manrope', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+body { font-family: 'Manrope', system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: clip; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: rgba(120,110,100,.28); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
 input, select, textarea, button { font-family: inherit; }
@@ -23,12 +23,13 @@ input:focus, select:focus, textarea:focus { outline: none; }
 @keyframes scIn { from { transform: translateY(6px); } to { transform: none; } }
 @keyframes scToast { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .sc-view { animation: scIn .28s cubic-bezier(.2,.7,.2,1); }
+@media (max-width: 879.98px) { .sc-hide-m { display: none !important; } }
 i[data-lucide] { display: inline-flex; align-items: center; justify-content: center; line-height: 0; vertical-align: middle; }
 i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
 @media print {
   @page { margin: 14mm; }
   body * { visibility: hidden !important; }
-  .print-area, .print-area * { visibility: visible !important; }
+  .print-area, .print-area * { visibility: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   .print-area { position: absolute !important; left: 0; top: 0; width: 100%; box-shadow: none !important; }
   .no-print { display: none !important; }
 }
@@ -104,12 +105,49 @@ i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
   </aside>
   </sc-if>
 
+  <sc-if value="{{ showMobileNav }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" onClick="{{ closeMobileNav }}" style="position:fixed;inset:0;z-index:70;background:rgba(20,30,24,.5);backdrop-filter:blur(3px);display:flex">
+    <aside onClick="{{ stopProp }}" style="width:268px;max-width:84vw;height:100%;background:var(--side-bg);display:flex;flex-direction:column;box-shadow:0 0 50px -10px rgba(0,0,0,.45);animation:scIn .22s cubic-bezier(.2,.7,.2,1)">
+      <div style="padding:18px 16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--side-border)">
+        <div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0"><i data-lucide="printer"></i></div>
+        <div style="min-width:0;flex:1">
+          <div style="font-weight:800;font-size:13.5px;letter-spacing:.1em;color:var(--side-fg)">SAHABAT</div>
+          <div style="font-size:10.5px;color:var(--side-muted);letter-spacing:.18em">PRINTING</div>
+        </div>
+        <button onClick="{{ closeMobileNav }}" aria-label="Tutup menu" title="Tutup" style="cursor:pointer;background:transparent;border:none;color:var(--side-muted);display:flex;padding:7px;border-radius:9px" style-hover="background:var(--side-active-bg);color:var(--side-active-fg)"><i data-lucide="x" style="font-size:18px"></i></button>
+      </div>
+      <nav style="flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:3px;overflow-y:auto">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+          <button data-view="{{ n.view }}" onClick="{{ onNav }}" style="{{ n.style }}">
+            <i data-lucide="{{ n.icon }}" style="font-size:18px"></i>
+            <span>{{ n.label }}</span>
+            <sc-if value="{{ n.badge }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;background:var(--accent);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px">{{ n.badge }}</span></sc-if>
+          </button>
+        </sc-for>
+      </nav>
+      <div style="padding:14px 12px;border-top:1px solid var(--side-border)">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px">
+          <div style="width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">{{ userInitials }}</div>
+          <div style="min-width:0;flex:1">
+            <div style="font-weight:700;font-size:13px;color:var(--side-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ userLabel }}</div>
+            <div style="font-size:11px;color:var(--side-muted)">{{ roleLabel }}</div>
+          </div>
+          <button onClick="{{ onLogout }}" title="Keluar" aria-label="Keluar" style="cursor:pointer;background:transparent;border:none;color:var(--side-muted);display:flex;padding:6px;border-radius:8px" style-hover="background:var(--side-active-bg);color:var(--side-active-fg)"><i data-lucide="log-out" style="font-size:16px"></i></button>
+        </div>
+      </div>
+    </aside>
+  </div>
+  </sc-if>
+
   <div style="flex:1;min-width:0;display:flex;flex-direction:column">
     <header style="position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--page) 82%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 22px;height:62px;display:flex;align-items:center;gap:14px">
       <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;align-items:center;gap:9px;margin-right:auto">
-          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i data-lucide="printer"></i></div>
-          <span style="font-weight:800;font-size:13px;letter-spacing:.08em">SAHABAT</span>
+        <div style="display:flex;align-items:center;gap:10px;margin-right:auto">
+          <button onClick="{{ toggleMobileNav }}" aria-label="Buka menu navigasi" title="Menu" style="cursor:pointer;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--text);flex-shrink:0" style-hover="border-color:var(--accent);color:var(--accent)"><i data-lucide="menu" style="font-size:20px"></i></button>
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(150deg,#16a34a,#166534);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px"><i data-lucide="printer"></i></div>
+            <span style="font-weight:800;font-size:13px;letter-spacing:.08em">SAHABAT</span>
+          </div>
         </div>
       </sc-if>
       <sc-if value="{{ showTitle }}" hint-placeholder-val="{{ true }}">
@@ -563,16 +601,16 @@ i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
       <sc-if value="{{ isProducts }}" hint-placeholder-val="{{ false }}">
       <div class="sc-view">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
-          <div style="display:grid;grid-template-columns:{{ productGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em"><span>Produk</span><span>Satuan</span><span style="text-align:right">Harga Dasar</span><span style="text-align:center">Status</span></div>
+          <div style="display:grid;grid-template-columns:{{ productGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em"><span>Produk</span><span>Satuan</span><span style="text-align:right">Harga Dasar</span><span class="sc-hide-m" style="text-align:center">Status</span></div>
           <sc-for list="{{ productsVM }}" as="p" hint-placeholder-count="6">
             <div style="display:grid;grid-template-columns:{{ productGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);align-items:center">
-              <span style="font-weight:700;font-size:14px">{{ p.name }}</span>
+              <span style="font-weight:700;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
               <span style="font-size:13px;color:var(--muted)">/ {{ p.unit }}</span>
               <span style="text-align:right">
-                <sc-if value="{{ canEditPrice }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:3px;border:1px solid var(--border);border-radius:9px;padding:5px 8px;background:var(--page)"><span style="color:var(--muted);font-size:12px">Rp</span><input data-id="{{ p.id }}" value="{{ p.base }}" onInput="{{ onProductBase }}" inputmode="numeric" style="width:78px;border:none;background:transparent;text-align:right;font-size:13.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums"></span></sc-if>
+                <sc-if value="{{ canEditPrice }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:3px;border:1px solid var(--border);border-radius:9px;padding:5px 8px;background:var(--page)"><span style="color:var(--muted);font-size:12px">Rp</span><input data-id="{{ p.id }}" value="{{ p.base }}" onInput="{{ onProductBase }}" inputmode="numeric" style="width:64px;min-width:0;border:none;background:transparent;text-align:right;font-size:13.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums"></span></sc-if>
                 <sc-if value="{{ cantEditPrice }}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ p.baseDisplay }}</span></sc-if>
               </span>
-              <span style="text-align:center"><span style="font-size:11.5px;font-weight:700;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 9px;border-radius:7px">Aktif</span></span>
+              <span class="sc-hide-m" style="text-align:center"><span style="font-size:11.5px;font-weight:700;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 9px;border-radius:7px">Aktif</span></span>
             </div>
           </sc-for>
         </div>
@@ -583,16 +621,16 @@ i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
       <sc-if value="{{ isStock }}" hint-placeholder-val="{{ false }}">
       <div class="sc-view">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden">
-          <div style="display:grid;grid-template-columns:{{ stockGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em"><span>Bahan</span><span style="text-align:center">Sisa Stok</span><span style="text-align:center">Status</span><span>Catatan</span></div>
+          <div style="display:grid;grid-template-columns:{{ stockGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em"><span>Bahan</span><span style="text-align:center">Sisa Stok</span><span class="sc-hide-m" style="text-align:center">Status</span><span>Catatan</span></div>
           <sc-for list="{{ stockVM }}" as="s" hint-placeholder-count="5">
             <div style="display:grid;grid-template-columns:{{ stockGrid }};gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);align-items:center">
-              <span style="font-weight:700;font-size:14px">{{ s.name }}</span>
+              <span style="font-weight:700;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis">{{ s.name }}</span>
               <span style="text-align:center">
                 <sc-if value="{{ canEditStock }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:4px"><button data-id="{{ s.id }}" data-d="-1" onClick="{{ onStockAdj }}" style="cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid var(--border);background:var(--page);color:var(--text);font-weight:700">−</button><span style="min-width:62px;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ s.qtyLabel }}</span><button data-id="{{ s.id }}" data-d="1" onClick="{{ onStockAdj }}" style="cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid var(--border);background:var(--page);color:var(--text);font-weight:700">+</button></span></sc-if>
                 <sc-if value="{{ cantEditStock }}" hint-placeholder-val="{{ false }}"><span style="font-weight:700;font-size:14px;font-variant-numeric:tabular-nums">{{ s.qtyLabel }}</span></sc-if>
               </span>
-              <span style="text-align:center"><span style="{{ s.pillStyle }}">{{ s.pill }}</span></span>
-              <span style="font-size:12.5px;color:var(--muted)">
+              <span class="sc-hide-m" style="text-align:center"><span style="{{ s.pillStyle }}">{{ s.pill }}</span></span>
+              <span style="font-size:12.5px;color:var(--muted);min-width:0">
                 <sc-if value="{{ s.hasNote }}" hint-placeholder-val="{{ false }}">{{ s.note }}</sc-if>
                 <sc-if value="{{ canNote }}" hint-placeholder-val="{{ false }}"><button data-id="{{ s.id }}" onClick="{{ onLowNote }}" style="cursor:pointer;background:transparent;border:none;color:var(--accent);font-weight:600;font-size:12px;padding:0;display:inline-flex;align-items:center;gap:4px"><i data-lucide="message-square-plus" style="font-size:13px"></i>Tandai hampir habis</button></sc-if>
               </span>
@@ -604,7 +642,7 @@ i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
 
       <!-- REPORTS -->
       <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
-      <div class="sc-view">
+      <div class="sc-view print-area">
         <div class="no-print" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px">
           <div style="display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px">
             <sc-for list="{{ periodTabs }}" as="pt" hint-placeholder-count="3"><button data-period="{{ pt.period }}" onClick="{{ onReportPeriod }}" style="{{ pt.style }}">{{ pt.label }}</button></sc-for>
@@ -753,6 +791,22 @@ i[data-lucide] svg { width: 1em; height: 1em; stroke-width: 2; }
 </div>
 </sc-if>
 
+<sc-if value="{{ confirmOpen }}" hint-placeholder-val="{{ false }}">
+<div class="no-print" onClick="{{ onConfirmNo }}" style="position:fixed;inset:0;z-index:95;background:rgba(20,30,24,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px">
+  <div onClick="{{ stopProp }}" style="width:100%;max-width:404px;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 30px 70px -30px rgba(0,0,0,.5);padding:24px;animation:scIn .2s cubic-bezier(.2,.7,.2,1)">
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:13px">
+      <span style="{{ confirmIconWrap }}"><i data-lucide="{{ confirmIcon }}" style="font-size:22px"></i></span>
+      <h3 style="margin:0;font-size:17px;font-weight:800;color:var(--text)">{{ confirmTitle }}</h3>
+    </div>
+    <p style="margin:0 0 20px;font-size:13.5px;color:var(--muted);line-height:1.55">{{ confirmMessage }}</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onClick="{{ onConfirmNo }}" style="cursor:pointer;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:10px 16px;font-weight:700;font-size:13.5px;color:var(--text)" style-hover="background:var(--page)">Batal</button>
+      <button onClick="{{ onConfirmYes }}" style="{{ confirmBtnStyle }}">{{ confirmLabel }}</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
 <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
 <div class="no-print" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:80;background:#1c1917;color:#fff;padding:13px 20px;border-radius:13px;font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:9px;box-shadow:0 16px 34px -14px rgba(0,0,0,.5);animation:scToast .3s ease"><i data-lucide="check-circle-2" style="font-size:17px;color:#4ade80"></i>{{ toast }}</div>
 </sc-if>
@@ -770,7 +824,7 @@ class Component extends DCLogic {
   state = {
     screen: 'login', role: null, userId: null, view: 'dashboard',
     selectedOrderId: null, task: null, search: '', statusFilter: 'all', taskFilter: 'all',
-    theme: 'A', toast: null, vw: 1200,
+    theme: 'A', toast: null, vw: 1200, mobileNav: false, confirm: null,
     notaOrderId: null, reportPeriod: 'month',
     payInput: '', issueType: 'Brief belum jelas', issueNote: '',
     nextNum: 1043,
@@ -927,7 +981,8 @@ class Component extends DCLogic {
     if (!createdAt) return false;
     if (period === 'today') return createdAt === this.TODAY;
     if (period === 'week') { const days = this.recentDays(7).map(d => this.ymd(d)); return days.includes(createdAt); }
-    return true; // month / all
+    if (period === 'month') return String(createdAt).slice(0, 7) === this.TODAY.slice(0, 7);
+    return true; // all
   }
 
   // ---------- nav / auth ----------
@@ -935,9 +990,12 @@ class Component extends DCLogic {
   defaultUser(role) { return role === 'designer' ? 's1' : role === 'production' ? 's3' : null; }
   defaultView(role) { return this.isStaffRole(role) ? 'tasks' : 'dashboard'; }
   onLogin = (e) => { const role = e.currentTarget.dataset.role; this.setState({ screen: 'app', role, userId: this.defaultUser(role), view: this.defaultView(role), selectedOrderId: null, task: null }); };
-  onSwitchRole = (e) => { const role = e.currentTarget.dataset.role; this.setState({ role, userId: this.defaultUser(role), view: this.defaultView(role), selectedOrderId: null, task: null, search: '', statusFilter: 'all', taskFilter: 'all' }); };
-  onLogout = () => { this.setState({ screen: 'login', role: null, userId: null }); };
-  onNav = (e) => { this.setState({ view: e.currentTarget.dataset.view, selectedOrderId: null, task: null }); };
+  onSwitchRole = (e) => { const role = e.currentTarget.dataset.role; this.setState({ role, userId: this.defaultUser(role), view: this.defaultView(role), selectedOrderId: null, task: null, search: '', statusFilter: 'all', taskFilter: 'all', mobileNav: false }); };
+  onLogout = () => { this.setState({ screen: 'login', role: null, userId: null, mobileNav: false }); };
+  onNav = (e) => { this.setState({ view: e.currentTarget.dataset.view, selectedOrderId: null, task: null, mobileNav: false }); };
+  toggleMobileNav = () => this.setState(s => ({ mobileNav: !s.mobileNav }));
+  closeMobileNav = () => this.setState({ mobileNav: false });
+  stopProp = (e) => { e.stopPropagation(); };
   onBack = () => { const v = this.state.view === 'taskDetail' ? 'tasks' : (this.state.view === 'orderDetail' ? 'orders' : this.state.view === 'create' ? 'orders' : (this.isStaffRole(this.state.role) ? 'tasks' : 'dashboard')); this.setState({ view: v, selectedOrderId: null, task: null }); };
   onOpenOrder = (e) => { this.setState({ selectedOrderId: e.currentTarget.dataset.id, view: 'orderDetail' }); };
   onOpenTask = (e) => { this.setState({ task: { orderId: e.currentTarget.dataset.oid, itemId: e.currentTarget.dataset.iid }, view: 'taskDetail' }); };
@@ -952,10 +1010,14 @@ class Component extends DCLogic {
   mutateOrder(id, fn) { this.setState(s => ({ orders: s.orders.map(o => o.id === id ? fn({ ...o }) : o) })); }
   onItemStatus = (e) => { const iid = e.currentTarget.dataset.iid; const val = e.currentTarget.value; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => it.id === iid ? { ...it, status: val } : it) })); this.toast('Status diperbarui'); };
   onAdvanceItem = (e) => { const iid = e.currentTarget.dataset.iid; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => { if (it.id !== iid) return it; const ni = this.nextStatus(it.status, this.MAIN_FLOW); return ni ? { ...it, status: ni } : it; }) })); this.toast('Status diperbarui'); };
-  onCancelItem = (e) => { const iid = e.currentTarget.dataset.iid; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => it.id === iid ? { ...it, status: 'Dibatalkan' } : it) })); this.toast('Item dibatalkan'); };
+  onCancelItem = (e) => { const iid = e.currentTarget.dataset.iid; this.setState({ confirm: { kind: 'cancelItem', iid, tone: 'danger', title: 'Batalkan item ini?', message: 'Status item akan diubah menjadi "Dibatalkan". Tindakan ini tidak bisa dikembalikan dari layar ini.', confirmLabel: 'Ya, Batalkan' } }); };
+  doCancelItem(iid) { this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, items: o.items.map(it => it.id === iid ? { ...it, status: 'Dibatalkan' } : it) })); this.toast('Item dibatalkan'); }
   onPayInput = (e) => this.setState({ payInput: e.currentTarget.value.replace(/[^0-9]/g, '') });
   onAddPay = () => { const amt = Number(this.state.payInput) || 0; if (!amt) return; this.mutateOrder(this.state.selectedOrderId, o => ({ ...o, dp: (Number(o.dp) || 0) + amt })); this.setState({ payInput: '' }); this.toast('Pembayaran dicatat'); };
-  onMarkPaid = () => { const o = this.state.orders.find(x => x.id === this.state.selectedOrderId); const c = this.calc(o); this.mutateOrder(o.id, x => ({ ...x, dp: c.total })); this.toast('Order ditandai lunas'); };
+  onMarkPaid = () => { const o = this.state.orders.find(x => x.id === this.state.selectedOrderId); if (!o) return; const c = this.calc(o); this.setState({ confirm: { kind: 'markPaid', tone: 'accent', title: 'Tandai lunas?', message: 'Pembayaran akan dicatat penuh sebesar ' + this.fmtRp(c.remaining) + ' (sisa tagihan). Pastikan pembayaran sudah benar-benar diterima.', confirmLabel: 'Ya, Tandai Lunas' } }); };
+  doMarkPaid() { const o = this.state.orders.find(x => x.id === this.state.selectedOrderId); if (!o) return; const c = this.calc(o); this.mutateOrder(o.id, x => ({ ...x, dp: c.total })); this.toast('Order ditandai lunas'); }
+  onConfirmYes = () => { const c = this.state.confirm; if (!c) return; if (c.kind === 'cancelItem') this.doCancelItem(c.iid); else if (c.kind === 'markPaid') this.doMarkPaid(); this.setState({ confirm: null }); };
+  onConfirmNo = () => this.setState({ confirm: null });
 
   // ---------- create ----------
   onCustField = (e) => { const f = e.currentTarget.dataset.field; const v = e.currentTarget.value; this.setState(s => ({ draft: { ...s.draft, [f]: v } })); };
@@ -1061,7 +1123,8 @@ class Component extends DCLogic {
       setRoot: this.setRoot, toast: S.toast,
       brand: 'SAHABAT PRINTING', roleLabel, userLabel, userInitials: this.initials(userLabel),
       navItems, onNav: this.onNav, roleSwitch, onSwitchRole: this.onSwitchRole, onLogout: this.onLogout,
-      onLogin: this.onLogin, showSidebar: !isMobile, showTitle: true,
+      onLogin: this.onLogin, showSidebar: !isMobile, showTitle: !isMobile,
+      showMobileNav: isMobile && S.mobileNav, toggleMobileNav: this.toggleMobileNav, closeMobileNav: this.closeMobileNav, stopProp: this.stopProp,
       pageTitle: (v === 'tasks' ? (role === 'designer' ? 'Tugas Desain' : 'Tugas Produksi') : (titles[v] || '')), crumb: crumbs[v] || '',
       themeLabelStyle: isMobile ? 'display:none' : '',
       loginRoles: [
@@ -1084,8 +1147,8 @@ class Component extends DCLogic {
       detailCols: isMobile ? '1fr' : '1.7fr 1fr',
       taskCols: isMobile ? '1fr' : 'repeat(2,1fr)',
       orderGrid: isMobile ? '1.4fr .7fr 1fr .9fr .8fr' : '1.5fr 1.4fr 1fr 1.2fr 1fr .9fr',
-      productGrid: '2fr 1fr 1.2fr 1fr',
-      stockGrid: isMobile ? '1.3fr 1.2fr 1fr 1.4fr' : '1.4fr 1.3fr 1fr 1.8fr',
+      productGrid: isMobile ? '1.3fr .7fr 1.5fr' : '2fr 1fr 1.2fr 1fr',
+      stockGrid: isMobile ? '1fr 1.7fr 1.6fr' : '1.4fr 1.3fr 1fr 1.8fr',
     };
 
     // ----- dashboard / shared order vms -----
@@ -1093,7 +1156,8 @@ class Component extends DCLogic {
     const activeOrders = ordersAll.filter(o => !o.items.every(it => it.status === 'Selesai' || it.status === 'Dibatalkan'));
     const unpaidOrders = ordersAll.filter(o => this.calc(o).pay !== 'paid');
     const outstanding = unpaidOrders.reduce((a, o) => a + this.calc(o).remaining, 0);
-    const revenueMonth = ordersAll.reduce((a, o) => a + this.calc(o).dp, 0);
+    const monthOrders = ordersAll.filter(o => this.inPeriod(o.createdAt, 'month'));
+    const revenueMonth = monthOrders.reduce((a, o) => a + this.calc(o).dp, 0);
     const issues = this.allIssues();
 
     const orderVM = (o) => {
@@ -1303,6 +1367,17 @@ class Component extends DCLogic {
         };
         out.onCloseNota = this.onCloseNota; out.onPrintNota = this.onPrintNota;
       }
+    }
+
+    // ----- confirmation dialog -----
+    out.confirmOpen = !!S.confirm;
+    out.onConfirmYes = this.onConfirmYes; out.onConfirmNo = this.onConfirmNo;
+    if (S.confirm) {
+      const c = S.confirm; const danger = c.tone === 'danger';
+      out.confirmTitle = c.title; out.confirmMessage = c.message; out.confirmLabel = c.confirmLabel;
+      out.confirmIcon = danger ? 'triangle-alert' : 'check-circle-2';
+      out.confirmIconWrap = 'width:40px;height:40px;flex-shrink:0;border-radius:11px;display:flex;align-items:center;justify-content:center;' + (danger ? 'background:#fef2f2;color:#dc2626' : 'background:var(--accent-soft);color:var(--accent-strong)');
+      out.confirmBtnStyle = 'cursor:pointer;border:none;border-radius:11px;padding:10px 18px;font-weight:800;font-size:13.5px;color:#fff;' + (danger ? 'background:#dc2626' : 'background:var(--accent)');
     }
 
     return out;
